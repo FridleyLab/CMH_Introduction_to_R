@@ -1,10 +1,11 @@
 ---
-title: "Lea.orange[R]ning about Statistics -YEAH!!!"
-subtitle: "STATISTICAL TESTS! "
+title: "Lea.orange[R]ning about Statistics"
+subtitle: "Chi-Squared, Correlation, T-Test, Wilcoxon Rank Sum, and ANOVA"
 author: 
   - Zachary Thompson 
+  - Alex Soupir
 institute: "Moffitt Cancer Center"
-date: '`r strftime(Sys.time(), "%B %d, %Y")`'
+date: "Feb 28, 2025"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -48,9 +49,9 @@ options(width = 70)
    
 
    
-# MERGE and making smoking variable 
-clinical <- read.csv(file = "F:\\myGitRepo\\Introduction-to-R\\data\\tcga-clinical.csv", header = TRUE)
-geneexp <- read.csv(file = "F:\\myGitRepo\\Introduction-to-R\\data\\tcga-gene-exp.csv", header = TRUE)
+# MERGE
+clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"))
+geneexp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
 
  
 # intersect(names(clinical), names(geneexp))
@@ -58,27 +59,11 @@ geneexp <- read.csv(file = "F:\\myGitRepo\\Introduction-to-R\\data\\tcga-gene-ex
 # dim(clinical)
 # dim(geneexp)
  
-tcga <- left_join(clinical, geneexp, by = "bcr_patient_barcode")
-#dim(tcga)
-
-
-
-tcga <- tcga %>% mutate(
-  #smoking = tobacco_smoking_history,
-  smoking = case_when(
-    tobacco_smoking_history %in% c(
-      "Current reformed smoker for < or = 15 years",
-      "Current reformed smoker for > 15 years",
-      "Current Reformed Smoker, Duration Not Specified"
-    ) ~ "Former",
-    tobacco_smoking_history %in% c("Current smoker") ~ "Current",
-    tobacco_smoking_history %in% c("Lifelong Non-smoker") ~ "Never",
-    is.na(tobacco_smoking_history) ~ NA_character_
-  )
-)
-
-#table(tcga$smoking, useNA = "always")
-
+target_p2 <- left_join(clinical, geneexp, by = "case_submitter_id") %>%
+  mutate(race = ifelse(grepl("pacific", race),
+                       "pacific islander",
+                       race))
+#dim(target_p2)
 
 ```
 
@@ -165,7 +150,9 @@ or to force either to be shown
 
 - Correlation
 
-- Two-sample tests (t-test, wilcoxon test)
+- Two-sample tests (T-test, Wilcoxon test)
+
+- Variance Analysis (ANOVA)
 
 
 ---
@@ -175,30 +162,17 @@ or to force either to be shown
 
 ```{r comment=NA}
 
-janitor::tabyl(tcga, radiation_therapy, vital_status )
+janitor::tabyl(target_p2, gender, vital_status )
    
 ```
  
- 
----
-
-## Review of tables
- 
-
-```{r comment=NA}
-
-janitor::tabyl(tcga, radiation_therapy, vital_status, 
-               show_na = FALSE )
-
-```
-
 ---
 
 ## Review of tables
 ```{r comment=NA}
 
-tcga %>% 
-  tabyl(smoking, gender, show_na = FALSE )
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE )
 ```
 
 
@@ -207,8 +181,8 @@ tcga %>%
 ## Review of tables
 ```{r comment=NA}
 
-tcga %>% 
-  tabyl(smoking, gender, show_na = FALSE ) %>% 
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
   adorn_totals(where = c("row","col"))
 ```
 
@@ -218,8 +192,8 @@ tcga %>%
 ```{r comment=NA}
 
 
-tcga %>% 
-  tabyl(smoking, gender, show_na = FALSE ) %>% 
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
   adorn_totals(where = c("row","col")) %>% 
   adorn_percentages(denominator = "col") 
 ```
@@ -229,8 +203,8 @@ tcga %>%
 ## Review of tables
 ```{r comment=NA}
 
-tcga %>% 
-  tabyl(smoking, gender, show_na = FALSE ) %>% 
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
   adorn_totals(where = c("row","col")) %>% 
   adorn_percentages(denominator = "col") %>% 
   adorn_pct_formatting(digits = 0)  
@@ -242,8 +216,8 @@ tcga %>%
 ## Review of tables
 ```{r comment=NA}
 
-tcga %>% 
-  tabyl(smoking, gender, show_na = FALSE ) %>% 
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
   adorn_totals(where = c("row","col")) %>% 
   adorn_percentages(denominator = "col") %>% 
   adorn_pct_formatting(digits = 0) %>% 
@@ -275,8 +249,8 @@ The null hypothesis of the Chi-Square test is that no relationship exists betwee
 
  
 ```{r chisqtest, echo=FALSE ,  include=TRUE}
- tcga %>% 
-  tabyl(smoking, gender, show_na = FALSE ) %>% 
+ target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
   adorn_totals(where = c("row","col")) %>% 
   adorn_percentages(denominator = "col") %>% 
   adorn_pct_formatting(digits = 0)   %>% 
@@ -298,25 +272,23 @@ The null hypothesis of the Chi-Square test is that no relationship exists betwee
 
 ```{r chisqtest1, eval=TRUE,  include=TRUE}
  
-tcga %>% tabyl( smoking, gender , show_na = FALSE ) %>%
+target_p2 %>% tabyl(race, gender, show_na = FALSE) %>%
   chisq.test()
 
 ```
  
-The p-value is very low so we reject the null hypothesis that there is no association between the variables. 
+The p-value is not low enough to reject the null hypothesis that there is no association between variables. 
 
 ---
 
 ## Pearson’s chi-squared test
  
-  More women are never smokers and more men are current smokers. 
- 
 .panelset[
 .panel[.panel-name[R Code]
 
 ```{r geombar, echo = TRUE, fig.show = "hide"}
-ggplot(tcga %>% filter(!is.na(smoking)),
-       aes(x = gender, fill = smoking )) +  
+ggplot(target_p2 %>% filter(!is.na(race)),
+       aes(x = gender, fill = race )) +  
   geom_bar(position = "fill") +
   labs(y = "proportion")
 
@@ -355,7 +327,7 @@ $r_{xy}$ = $\frac{ \sum_{i = 1}^{n}  (x_{i}-  \overline{x} )(y_{i}- \overline{y}
 
 *   n is the sample size
 *   $x_{i}$ and $y_{i}$  are the individual sample points indexed with i
-*   $\overline{x} = \frac{1}{n}\sum_{i = 1}^{n} x_{i}$ is the smaple mean of x (similarly y)
+*   $\overline{x} = \frac{1}{n}\sum_{i = 1}^{n} x_{i}$ is the sample mean of x (similarly y)
 
 
 
@@ -367,16 +339,16 @@ $r_{xy}$ = $\frac{ \sum_{i = 1}^{n}  (x_{i}-  \overline{x} )(y_{i}- \overline{y}
 ```{r  comment=NA}
 
  
-r1 <- tcga %>% correlation::cor_test("DUOXA1_exp", 
-                                          "DUOX1_exp", 
+r1 <- target_p2 %>% correlation::cor_test("CD3E", 
+                                          "IL7R", 
                                           method = c("pearson") ) 
  
-r2 <- tcga %>% correlation::cor_test("BUB1_exp",
-                                          "C10orf32_exp",
+r2 <- target_p2 %>% correlation::cor_test("CD3E",
+                                          "CD19",
                                           method = c("pearson") ) 
  
-r3 <- tcga %>% correlation::cor_test("BRAF_exp", 
-                                          "DTL_exp", 
+r3 <- target_p2 %>% correlation::cor_test("MYC", 
+                                          "KRAS", 
                                           method = c("pearson") )
  
 ```
@@ -403,10 +375,10 @@ r3 <- tcga %>% correlation::cor_test("BRAF_exp",
 .panel[.panel-name[R Code]
 
 ```{r geom, echo = TRUE, fig.show = "hide"}
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
+ggplot(target_p2) + 
+  aes(CD3E, IL7R) + 
   geom_point() + 
-  annotate(geom = "text", x = 10, y = 25000, 
+  annotate(geom = "text", x = 10, y = 800, 
            label = paste("r = ", round(r1$r, 2), sep = ""),
            color = "red")
 
@@ -433,10 +405,10 @@ ggplot(tcga) +
 
 ```{r geom2, echo = TRUE, fig.show = "hide"}
 
-ggplot(tcga) + 
-  aes(BUB1_exp, C10orf32_exp) + 
+ggplot(target_p2) + 
+  aes(CD3E, CD19) + 
   geom_point() + 
-  annotate(geom = "text", x = 1000, y = 4000, 
+  annotate(geom = "text", x = 500, y = 1000, 
            label = paste("r = ", round(r2$r, 2), sep = ""),
            color = "red")
  
@@ -461,10 +433,10 @@ ggplot(tcga) +
 .panel[.panel-name[R Code]
 
 ```{r geom3, echo = TRUE, fig.show = "hide"}
-ggplot(tcga) + 
-  aes(BRAF_exp, DTL_exp) + 
+ggplot(target_p2) + 
+  aes(MYC, KRAS) + 
   geom_point() + 
-  annotate(geom = "text", x = 0, y = 1100, 
+  annotate(geom = "text", x = 0, y = 325, 
            label = paste("r = ", round(r3$r, 2), sep = ""),  
            color = "red")
  
@@ -499,8 +471,8 @@ ggplot(tcga) +
  
 
 ```{r comment=NA}
-tcga %>% 
-  select(DUOXA1_exp, DUOX1_exp, BUB1_exp, BRAF_exp, DTL_exp ) %>%
+target_p2 %>% 
+  select(CD3E, IL7R, CD19, MYC, KRAS) %>%
   cor() %>% round(.,2)
 
 ```
@@ -546,16 +518,16 @@ ggplot(pdata, aes(x,y)) + geom_point()
 ```{r  comment=NA}
 
  
-r1 <- tcga %>% correlation::cor_test("DUOXA1_exp", 
-                                          "DUOX1_exp", 
+r1 <- target_p2 %>% correlation::cor_test("CD3E", 
+                                          "IL7R", 
                                           method = c("spearman") ) 
  
-r2 <- tcga %>% correlation::cor_test("BUB1_exp",
-                                          "C10orf32_exp",
+r2 <- target_p2 %>% correlation::cor_test("CD3E",
+                                          "CD19",
                                           method = c("spearman") ) 
  
-r3 <- tcga %>% correlation::cor_test("BRAF_exp", 
-                                          "DTL_exp", 
+r3 <- target_p2 %>% correlation::cor_test("MYC", 
+                                          "KRAS", 
                                           method = c("spearman") )
  
 ```
@@ -633,16 +605,18 @@ $S^{2}_{p}$ = $\frac{(N_{1}-1)s^{2}_{1} + (N_{1}-1)s^{2}_{1}}{N_{1}+N_{2}-2}$
  
 ## T-test visulize boxplots
 
+The gene *MME* is a common marker for pre-B ALL. It is also known as CD10.
+
 .panelset[
 .panel[.panel-name[R Code]
 
 ```{r t2boxplots, echo = TRUE, fig.show = "hide"}
   
-ggplot(tcga , aes(gender, PTEN_exp, fill = gender))  +
+ggplot(target_p2 , aes(gender, MME, fill = gender))  +
   geom_boxplot() +
   scale_fill_manual( values = c("yellow", "blue")) + 
   theme(legend.position = "none") +
-  labs(title = "PTEN expression" , x = "Gender", y = "expression")  
+  labs(title = "MME expression" , x = "Gender", y = "expression")  
 
 ```
 ]
@@ -666,7 +640,7 @@ ggplot(tcga , aes(gender, PTEN_exp, fill = gender))  +
 
 
 ```{r t2hist, echo = TRUE, fig.show = "hide"}
-  ggplot(tcga, aes(x=PTEN_exp, fill=gender)) +
+  ggplot(target_p2, aes(x=MME, fill=gender)) +
   scale_fill_manual( values = c("red", "blue")) + 
   geom_histogram( alpha=0.6, position="identity")
  
@@ -691,7 +665,7 @@ ggplot(tcga , aes(gender, PTEN_exp, fill = gender))  +
 ```{r comment=NA}
 
  
-t.test( PTEN_exp ~ gender, data = tcga,
+t.test( MME ~ gender, data = target_p2,
         alternative = c("two.sided"))
  
  
@@ -708,7 +682,7 @@ t.test( PTEN_exp ~ gender, data = tcga,
  
 A popular non-parametric test to compare outcomes between two independent groups is the Mann Whitney U test. The Mann Whitney U test, sometimes called the Mann Whitney Wilcoxon Test or the Wilcoxon Rank Sum Test, is used to test whether two samples are likely to derive from the same population (i.e., that the two populations have the same shape). 
 
-It can also be used on related samples or matched samples to assess whether their population mean ranks differ (i.e. it is a paired difference test). It can be used as an alternative to the paired Student's t-test when the distribution of the difference between two samples' means cannot be assumed to be normally distributed.   
+It can also be used on related samples or matched samples to assess whether their population mean ranks differ (i.e. it is a paired difference test). It can be used as an alternative to the paired Student's t-test when the distribution of the difference between two samples' means cannot be assumed to be normally distributed. This is the case with our TPM gene expression values.
 
 
 
@@ -727,13 +701,13 @@ It can also be used on related samples or matched samples to assess whether thei
 .panel[.panel-name[R Code]
 
 ```{r wilcoxonhists, echo = TRUE, fig.show = "hide"}
-mplot <- ggplot(tcga %>% filter(gender == "MALE"), 
-                aes(x = BUB1_exp )) +
+mplot <- ggplot(target_p2 %>% filter(gender == "male"), 
+                aes(x = NOTCH1 )) +
   geom_histogram(  colour = "black", position = "dodge") +
   ggtitle("Males") 
 
-wplot <- ggplot(tcga  %>% filter(gender == "FEMALE"), 
-                aes(x = BUB1_exp)) +
+wplot <- ggplot(target_p2  %>% filter(gender == "female"), 
+                aes(x = NOTCH1)) +
   geom_histogram(  colour= "black", position = "dodge")  +
   ggtitle("Females") 
   
@@ -756,11 +730,11 @@ grid.arrange(mplot,wplot, ncol=2)
 
 ```{r wilcoxonboxplots, echo = TRUE, fig.show = "hide"}
   
-ggplot(tcga , aes(gender, BUB1_exp, fill = gender))  +
+ggplot(target_p2 , aes(gender, NOTCH1, fill = gender))  +
   geom_boxplot() +
   scale_fill_manual( values = c("yellow", "blue")) + 
   theme(legend.position = "none") +
-  labs(title = "BUB1 expression" , x = "Gender", y = "expression")  
+  labs(title = "NOTCH1 expression" , x = "Gender", y = "expression")  
 
 ```
 ]
@@ -780,15 +754,97 @@ ggplot(tcga , aes(gender, BUB1_exp, fill = gender))  +
 ## Wilcoxon test gender
 ```{r comment=NA}
  
- wilcox.test(BUB1_exp ~ gender, data = tcga,
+ wilcox.test(NOTCH1 ~ gender, data = target_p2,
                    alternative = c("two.sided"))
  
  
 ```
 
-The p-value is very low so we reject the null hypothesis of no difference (0 location shift). 
+The p-value isn't below the 0.05 threshold, therefore we cannot reject the null hypothesis that there is no difference to accept the alternative that there is a difference.
+
+---
+
+## Analysis of Variance (ANOVA)
+
+ 
+Analysis of variance, or ANOVA, is performed to assess if the variance between groups is larger than the variance within groups. The anova is performed on a formula which describes a continuous measure and a categorical variable (think height by gender) that takes the form `continuous ~ categorical` just as the other tests before.
 
 
+---
+
+## ANOVA: Histograms
+  
+.panelset[
+
+.panel[.panel-name[Plot]
+
+```{r ref.label = "anovahists", echo = FALSE}
+```
+]
+
+.panel[.panel-name[R Code]
+
+```{r anovahists, echo = TRUE, fig.show = "hide"}
+mplot <- ggplot(target_p2 %>% filter(gender == "male"), 
+                aes(x = PAX5 )) +
+  geom_histogram(  colour = "black", position = "dodge", bins = 30) +
+  ggtitle("Males") 
+
+wplot <- ggplot(target_p2  %>% filter(gender == "female"), 
+                aes(x = PAX5)) +
+  geom_histogram(  colour= "black", position = "dodge", bins = 30)  +
+  ggtitle("Females") 
+  
+grid.arrange(mplot,wplot, ncol=2) 
+ 
+
+```
+]
+]
+
+
+
+---
+ 
+## ANOVA test visulize boxplots gender
+  
+.panelset[
+.panel[.panel-name[R Code]
+
+
+```{r anovaboxplots, echo = TRUE, fig.show = "hide"}
+  
+ggplot(target_p2 , aes(gender, PAX5, fill = gender))  +
+  geom_boxplot() +
+  scale_fill_manual( values = c("yellow", "blue")) + 
+  theme(legend.position = "none") +
+  labs(title = "PAX5 expression" , x = "Gender", y = "expression")  
+
+```
+]
+
+.panel[.panel-name[Plot]
+
+```{r ref.label = "anovaboxplots", echo = FALSE}
+```
+]
+]
+
+
+
+---
+
+
+## ANOVA test gender
+
+```{r comment=NA}
+ 
+pax5_anova = aov(PAX5 ~ gender, data = target_p2)
+summary(pax5_anova) 
+ 
+```
+
+The p-value very small, indicating that there is a statistically significant difference between our 2 groups (gender). The variance between groups is much greater than the variance within groups (202,182 vs 15,536, respectively).
 
 ---
 

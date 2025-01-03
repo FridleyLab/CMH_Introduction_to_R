@@ -1,0 +1,303 @@
+---
+title: "Lea.orange[R]ning about Statistics"
+subtitle: "Chi-Squared, Fishers Exact, and Survival with Kaplain Meier"
+author: 
+  - Zachary Thompson 
+  - Alex Soupir
+institute: "Moffitt Cancer Center"
+date: "Feb 28, 2025"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    chakra: libs/remark-0.14.0.min.js
+    css: 
+      - css/moffitt-xaringan.css
+      - css/moffitt-xaringan-extra.css
+      - css/tachyons.moffitt.css
+    seal: false
+    nature:
+      titleSlideClass: ["bottom", "left"]
+      slideNumberFormat: "%current%"
+      highlightStyle: atom-one-light
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: true
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=3.5, fig.retina=3,
+  out.width = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE, 
+  hiline = TRUE,
+   comment = NA 
+)
+options(width = 70)
+
+
+  #library(easystats)
+  library(tidyverse)
+  library(kableExtra)
+  library(ggplot2)
+  library(janitor)
+  library(gridExtra)
+  library(broom)
+   
+
+   
+# MERGE
+clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"))
+geneexp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
+
+ 
+# intersect(names(clinical), names(geneexp))
+ 
+# dim(clinical)
+# dim(geneexp)
+ 
+target_p2 <- left_join(clinical, geneexp, by = "case_submitter_id") %>%
+  mutate(race = ifelse(grepl("pacific", race),
+                       "pacific islander",
+                       race))
+#dim(target_p2)
+
+```
+
+name: title
+class: left bottom hide-count
+
+<!-- Slide Extras -->
+
+```{r xaringan-extras, echo=FALSE, results="asis"}
+# remotes::install_github("gadenbuie/xaringanExtra")
+xaringanExtra::use_xaringan_extra(c(
+  "tile_view"
+  # "editable",
+  # "animate",
+  # "panelset"
+))
+```
+
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+
+<!-- Title Slide -->
+<!-- <div class="talk-logo"></div> -->
+
+.talk-meta[
+.talk-title[
+# `r rmarkdown::metadata$title`
+
+`r rmarkdown::metadata$subtitle`
+]
+
+.talk-author[
+`r paste(rmarkdown::metadata$author, collapse = " &middot; ")`<br>
+.moffitt-gray[`r paste(rmarkdown::metadata$institute, collapse = ", ")`]
+]
+
+.talk-date.moffitt-gray[
+`r knitr::knit(text = rmarkdown::metadata$date)`
+]
+]
+
+
+```{css echo=FALSE}
+/* Define title slide image or logo here */
+.talk-logo {
+  width: 400px;
+  height: 750px;
+  position: absolute;
+  top: 6%;
+  right: 7%;
+  /* background-image: url('img/r4ds-cover.png'); */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: contain;
+}
+```
+
+<!-- Moffitt Logo and Slide Border ----
+
+All slides except "title" and "inverse" slides
+have the Moffitt Color Bar and logo.
+
+Additional classes are provided to disable both:
+
+- `class: no-logo` hides the logo
+- `class: no-border` hides the border
+
+or to force either to be shown
+
+- `class: moffitt-slide-logo` shows the logo
+- `class: moffitt-slide-border` shows the border
+-->
+
+---
+
+## What you will learn to run
+ 
+  
+- Review of tables with janitor package
+  
+- Chi square test
+
+- Fishers Exact Test
+
+- Survival Analysis using Kaplain Meier
+
+
+---
+
+## Review of tables
+ 
+
+```{r comment=NA}
+
+janitor::tabyl(target_p2, gender, vital_status )
+   
+```
+ 
+---
+
+## Review of tables
+```{r comment=NA}
+
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE )
+```
+
+
+---
+
+## Review of tables
+```{r comment=NA}
+
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
+  adorn_totals(where = c("row","col"))
+```
+
+---
+
+## Review of tables
+```{r comment=NA}
+
+
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
+  adorn_totals(where = c("row","col")) %>% 
+  adorn_percentages(denominator = "col") 
+```
+
+---
+
+## Review of tables
+```{r comment=NA}
+
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
+  adorn_totals(where = c("row","col")) %>% 
+  adorn_percentages(denominator = "col") %>% 
+  adorn_pct_formatting(digits = 0)  
+
+```
+
+---
+
+## Review of tables
+```{r comment=NA}
+
+target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
+  adorn_totals(where = c("row","col")) %>% 
+  adorn_percentages(denominator = "col") %>% 
+  adorn_pct_formatting(digits = 0) %>% 
+  adorn_ns(position = "front") 
+ 
+```
+
+ 
+ 
+---
+
+
+# Pearson’s chi-squared test
+ 
+The chi squared test is a non-parametric test that can be applied to contingency tables with various dimensions. The name of the test originates from the chi-squared distribution, which is the distribution for the squares of independent standard normal variables. This is the distribution of the test statistic of the chi squared test, which is defined by the sum of chi-square values for all cells arising from the difference between a cell’s observed value and the expected value, normalized by the expected value.
+ 
+$\chi ^{2}$ = $\sum_{ij}$ $\frac{(O_{ij} - E_{ij})^{2}}{E_{ij}}$ 
+
+
+*   $\chi ^{2}$ = chi square statistic
+*   $O_{ij}$ = observed value
+*   $E_{ij}$ = expected value
+
+
+---
+## Pearson’s chi-squared test
+ 
+The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
+
+ 
+```{r chisqtest, echo=FALSE ,  include=TRUE}
+ target_p2 %>% 
+  tabyl(race, gender, show_na = FALSE ) %>% 
+  adorn_totals(where = c("row","col")) %>% 
+  adorn_percentages(denominator = "col") %>% 
+  adorn_pct_formatting(digits = 0)   %>% 
+  adorn_ns(position = "front") 
+ 
+
+ 
+```
+ 
+
+
+---
+
+## Pearson’s chi-squared test
+ 
+The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
+
+ 
+
+```{r chisqtest1, eval=TRUE,  include=TRUE}
+ 
+target_p2 %>% tabyl(race, gender, show_na = FALSE) %>%
+  chisq.test()
+
+```
+ 
+The p-value is not low enough to reject the null hypothesis that there is no association between variables. 
+
+---
+
+## Pearson’s chi-squared test
+ 
+.panelset[
+.panel[.panel-name[R Code]
+
+```{r geombar, echo = TRUE, fig.show = "hide"}
+ggplot(target_p2 %>% filter(!is.na(race)),
+       aes(x = gender, fill = race )) +  
+  geom_bar(position = "fill") +
+  labs(y = "proportion")
+
+```
+]
+
+.panel[.panel-name[Plot]
+
+```{r ref.label = "geombar", echo = FALSE}
+```
+]
+]
+ 
+

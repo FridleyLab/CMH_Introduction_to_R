@@ -1,18 +1,19 @@
 ---
-title: "Data Visualization : part IV"
+title: "Statistical Testing of Means : V"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(janitor)
+library(correlation)
 ```
 
 ## Importing TARGET-ALL-P2 data 
 
 ```{r}
 
-library(readr)
 clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"))
 gene_exp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
 
@@ -25,20 +26,19 @@ gene_exp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
 
 ```
 
-## Create x-y plot with continuous values
+## Assess correlation between 2 genes
+
+Plot and perform a correlation test (both Pearson and Spearman)
 
 ```{r}
 
+
 ```
 
-## Create histogram
+## Perform ANOVA on a gene x race
 
 ```{r}
 
-```
-
-## Plot gene expression by race
-
-```{r}
 
 ```
+
