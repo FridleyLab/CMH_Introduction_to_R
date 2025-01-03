@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lea.orange[R]ning about Statistics -YEAH!!!</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Zachary Thompson" />
+    <meta name="date" content="2021-07-06" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/moffitt-xaringan.css" type="text/css" />
+    <link rel="stylesheet" href="css/moffitt-xaringan-extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/tachyons.moffitt.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+name: title
+class: left bottom hide-count
+
+&lt;!-- Slide Extras --&gt;
+
+
+
+
+
+
+&lt;!-- Title Slide --&gt;
+&lt;!-- &lt;div class="talk-logo"&gt;&lt;/div&gt; --&gt;
+
+.talk-meta[
+.talk-title[
+# Lea.orange[R]ning about Statistics -YEAH!!!
+
+STATISTICAL TESTS! 
+]
+
+.talk-author[
+Zachary Thompson&lt;br&gt;
+.moffitt-gray[Moffitt Cancer Center]
+]
+
+.talk-date.moffitt-gray[
+July 06, 2021
+]
+]
+
+
+&lt;style type="text/css"&gt;
+/* Define title slide image or logo here */
+.talk-logo {
+  width: 400px;
+  height: 750px;
+  position: absolute;
+  top: 6%;
+  right: 7%;
+  /* background-image: url('img/r4ds-cover.png'); */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: contain;
+}
+&lt;/style&gt;
+
+&lt;!-- Moffitt Logo and Slide Border ----
+
+All slides except "title" and "inverse" slides
+have the Moffitt Color Bar and logo.
+
+Additional classes are provided to disable both:
+
+- `class: no-logo` hides the logo
+- `class: no-border` hides the border
+
+or to force either to be shown
+
+- `class: moffitt-slide-logo` shows the logo
+- `class: moffitt-slide-border` shows the border
+--&gt;
+
+---
+
+## What you will learn to run
+ 
+  
+- Review of tables with janitor package
+  
+- Chi square test
+
+- Correlation
+
+- Two-sample tests (t-test, wilcoxon test)
+
+
+---
+
+## Review of tables
+ 
+
+
+```r
+janitor::tabyl(tcga, radiation_therapy, vital_status )
+```
+
+```
+ radiation_therapy Alive Dead
+                NO   217   84
+               YES   190   95
+              &lt;NA&gt;   243  214
+```
+ 
+ 
+---
+
+## Review of tables
+ 
+
+
+```r
+janitor::tabyl(tcga, radiation_therapy, vital_status, 
+               show_na = FALSE )
+```
+
+```
+ radiation_therapy Alive Dead
+                NO   217   84
+               YES   190   95
+```
+
+---
+
+## Review of tables
+
+```r
+tcga %&gt;% 
+  tabyl(smoking, gender, show_na = FALSE )
+```
+
+```
+ smoking FEMALE MALE
+ Current     40  151
+  Former     54  180
+   Never     72   88
+```
+
+
+---
+
+## Review of tables
+
+```r
+tcga %&gt;% 
+  tabyl(smoking, gender, show_na = FALSE ) %&gt;% 
+  adorn_totals(where = c("row","col"))
+```
+
+```
+ smoking FEMALE MALE Total
+ Current     40  151   191
+  Former     54  180   234
+   Never     72   88   160
+   Total    166  419   585
+```
+
+---
+
+## Review of tables
+
+```r
+tcga %&gt;% 
+  tabyl(smoking, gender, show_na = FALSE ) %&gt;% 
+  adorn_totals(where = c("row","col")) %&gt;% 
+  adorn_percentages(denominator = "col") 
+```
+
+```
+ smoking    FEMALE      MALE     Total
+ Current 0.2409639 0.3603819 0.3264957
+  Former 0.3253012 0.4295943 0.4000000
+   Never 0.4337349 0.2100239 0.2735043
+   Total 1.0000000 1.0000000 1.0000000
+```
+
+---
+
+## Review of tables
+
+```r
+tcga %&gt;% 
+  tabyl(smoking, gender, show_na = FALSE ) %&gt;% 
+  adorn_totals(where = c("row","col")) %&gt;% 
+  adorn_percentages(denominator = "col") %&gt;% 
+  adorn_pct_formatting(digits = 0)  
+```
+
+```
+ smoking FEMALE MALE Total
+ Current    24%  36%   33%
+  Former    33%  43%   40%
+   Never    43%  21%   27%
+   Total   100% 100%  100%
+```
+
+---
+
+## Review of tables
+
+```r
+tcga %&gt;% 
+  tabyl(smoking, gender, show_na = FALSE ) %&gt;% 
+  adorn_totals(where = c("row","col")) %&gt;% 
+  adorn_percentages(denominator = "col") %&gt;% 
+  adorn_pct_formatting(digits = 0) %&gt;% 
+  adorn_ns(position = "front") 
+```
+
+```
+ smoking     FEMALE       MALE      Total
+ Current  40  (24%) 151  (36%) 191  (33%)
+  Former  54  (33%) 180  (43%) 234  (40%)
+   Never  72  (43%)  88  (21%) 160  (27%)
+   Total 166 (100%) 419 (100%) 585 (100%)
+```
+
+ 
+ 
+---
+
+
+# Pearson’s chi-squared test
+ 
+The chi squared test is a non-parametric test that can be applied to contingency tables with various dimensions. The name of the test originates from the chi-squared distribution, which is the distribution for the squares of independent standard normal variables. This is the distribution of the test statistic of the chi squared test, which is defined by the sum of chi-square values for all cells arising from the difference between a cell’s observed value and the expected value, normalized by the expected value.
+ 
+`\(\chi ^{2}\)` = `\(\sum_{ij}\)` `\(\frac{(O_{ij} - E_{ij})^{2}}{E_{ij}}\)` 
+
+
+*   `\(\chi ^{2}\)` = chi square statistic
+*   `\(O_{ij}\)` = observed value
+*   `\(E_{ij}\)` = expected value
+
+
+---
+## Pearson’s chi-squared test
+ 
+The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
+
+ 
+
+```
+ smoking     FEMALE       MALE      Total
+ Current  40  (24%) 151  (36%) 191  (33%)
+  Former  54  (33%) 180  (43%) 234  (40%)
+   Never  72  (43%)  88  (21%) 160  (27%)
+   Total 166 (100%) 419 (100%) 585 (100%)
+```
+ 
+
+
+---
+
+## Pearson’s chi-squared test
+ 
+The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
+
+ 
+
+
+```r
+tcga %&gt;% tabyl( smoking, gender , show_na = FALSE ) %&gt;%
+  chisq.test()
+```
+
+```
+
+	Pearson's Chi-squared test
+
+data:  .
+X-squared = 30.182, df = 2, p-value = 0.0000002793
+```
+ 
+The p-value is very low so we reject the null hypothesis that there is no association between the variables. 
+
+---
+
+## Pearson’s chi-squared test
+ 
+  More women are never smokers and more men are current smokers. 
+ 
+.panelset[
+.panel[.panel-name[R Code]
+
+
+```r
+ggplot(tcga %&gt;% filter(!is.na(smoking)),
+       aes(x = gender, fill = smoking )) +  
+  geom_bar(position = "fill") +
+  labs(y = "proportion")
+```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
+]
+]
+ 
+
+
+
+---
+ 
+# Correlation 
+ 
+A correlation coefficient is a numerical measure of some type of correlation, meaning a statistical relationship between two variables.  
+
+Several types of correlation coefficient exist, each with their own definition and own range of usability and characteristics. They all assume values in the range from −1 to +1, where ±1 indicates the strongest possible agreement and 0 no agreement.
+
+ Pearson
+ 
+ Spearman
+ 
+---
+ 
+## Pearson Correlation 
+
+ The .bg-orange.white[Pearson product-moment correlation coefficient], also known as r or Pearson's r, is a measure of the strength and direction of the linear relationship between two variables that is defined as the covariance of the variables divided by the product of their standard deviations.  Pearson's r is the best-known and most commonly used type of correlation coefficient. A relationship is linear when a change in one variable is associated with a proportional change in the other variable.
+ 
+`\(r_{xy}\)` = `\(\frac{ \sum_{i = 1}^{n}  (x_{i}-  \overline{x} )(y_{i}- \overline{y})}{\sqrt(\sum_{i = 1}^{n}  (x_{i}-  \overline{x} )^{2})\sqrt(\sum_{i = 1}^{n}  (y_{i}-  \overline{y} )^{2})}\)` 
+
+*   n is the sample size
+*   `\(x_{i}\)` and `\(y_{i}\)`  are the individual sample points indexed with i
+*   `\(\overline{x} = \frac{1}{n}\sum_{i = 1}^{n} x_{i}\)` is the smaple mean of x (similarly y)
+
+
+
+---
+ 
+## Pearson Correlation 
+ 
+
+
+```r
+r1 &lt;- tcga %&gt;% correlation::cor_test("DUOXA1_exp", 
+                                          "DUOX1_exp", 
+                                          method = c("pearson") ) 
+ 
+r2 &lt;- tcga %&gt;% correlation::cor_test("BUB1_exp",
+                                          "C10orf32_exp",
+                                          method = c("pearson") ) 
+ 
+r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp", 
+                                          "DTL_exp", 
+                                          method = c("pearson") )
+```
+
+---
+ 
+## Pearson Correlation 
+ 
+
+
+```r
+ knitr::kable(bind_rows(r1,r2,r3 ), format = 'html', digits = 3) %&gt;%
+  kable_styling(font_size = 12)
+```
+
+&lt;table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Parameter1 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Parameter2 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; r &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; CI &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; CI_low &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; CI_high &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; t &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; df_error &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Method &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_Obs &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; DUOXA1_exp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; DUOX1_exp &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.918 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.908 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.927 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 74.789 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1041 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; BUB1_exp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C10orf32_exp &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.600 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.638 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.560 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -24.227 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1041 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; BRAF_exp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; DTL_exp &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.020 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.041 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.080 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.642 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1041 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.521 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+
+---
+
+## Pearson Correlation Scatter Plot
+
+.panelset[
+.panel[.panel-name[R Code]
+
+
+```r
+ggplot(tcga) + 
+  aes(DUOXA1_exp, DUOX1_exp) + 
+  geom_point() + 
+  annotate(geom = "text", x = 10, y = 25000, 
+           label = paste("r = ", round(r1$r, 2), sep = ""),
+           color = "red")
+```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-12-1.png" width="100%" /&gt;
+]
+]
+ 
+
+
+
+
+---
+
+## Pearson Correlation Scatter Plot
+  
+.panelset[
+.panel[.panel-name[R Code]
+
+
+```r
+ggplot(tcga) + 
+  aes(BUB1_exp, C10orf32_exp) + 
+  geom_point() + 
+  annotate(geom = "text", x = 1000, y = 4000, 
+           label = paste("r = ", round(r2$r, 2), sep = ""),
+           color = "red")
+```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-13-1.png" width="100%" /&gt;
+]
+]
+
+ 
+
+---
+
+## Pearson Correlation Scatter Plot
+  
+.panelset[
+.panel[.panel-name[R Code]
+
+
+```r
+ggplot(tcga) + 
+  aes(BRAF_exp, DTL_exp) + 
+  geom_point() + 
+  annotate(geom = "text", x = 0, y = 1100, 
+           label = paste("r = ", round(r3$r, 2), sep = ""),  
+           color = "red")
+```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-14-1.png" width="100%" /&gt;
+]
+]
+
+ 
+
+
+
+ 
+
+
+
+
+---
+
+## Correllation Matrix 
+ 
+
+
+```r
+tcga %&gt;% 
+  select(DUOXA1_exp, DUOX1_exp, BUB1_exp, BRAF_exp, DTL_exp ) %&gt;%
+  cor() %&gt;% round(.,2)
+```
+
+```
+           DUOXA1_exp DUOX1_exp BUB1_exp BRAF_exp DTL_exp
+DUOXA1_exp       1.00      0.92     0.40    -0.07    0.30
+DUOX1_exp        0.92      1.00     0.38    -0.05    0.30
+BUB1_exp         0.40      0.38     1.00     0.01    0.78
+BRAF_exp        -0.07     -0.05     0.01     1.00    0.02
+DTL_exp          0.30      0.30     0.78     0.02    1.00
+```
+
+
+---
+
+
+## Spearman Correlation 
+
+The Spearman correlation evaluates the monotonic relationship between two continuous or ordinal variables. It is a nonparametric measure of rank correlation (statistical dependence between the rankings of two variables). In a monotonic relationship, the variables tend to change together, but not necessarily at a constant rate. The Spearman correlation coefficient is based on the ranked values for each variable rather than the raw data.
+ 
+
+
+---
+
+
+
+## Spearman Correlation example of monotonic relationship
+
+
+ 
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-17-1.png" width="100%" /&gt;
+
+
+---
+
+
+ 
+
+## Spearman Correlation 
+ 
+
+
+```r
+r1 &lt;- tcga %&gt;% correlation::cor_test("DUOXA1_exp", 
+                                          "DUOX1_exp", 
+                                          method = c("spearman") ) 
+ 
+r2 &lt;- tcga %&gt;% correlation::cor_test("BUB1_exp",
+                                          "C10orf32_exp",
+                                          method = c("spearman") ) 
+ 
+r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp", 
+                                          "DTL_exp", 
+                                          method = c("spearman") )
+```
+
+---
+ 
+## Spearman Correlation 
+ 
+
+
+```r
+ knitr::kable(bind_rows(r1, r2, r3), format = 'html', digits = 3) %&gt;%
+  kable_styling(font_size = 12)
+```
+
+&lt;table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Parameter1 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Parameter2 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; rho &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; CI &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; CI_low &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; CI_high &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; S &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Method &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_Obs &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; DUOXA1_exp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; DUOX1_exp &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.905 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.892 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.915 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18053045 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; BUB1_exp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; C10orf32_exp &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.796 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.818 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.772 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 339618298 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; BRAF_exp &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; DTL_exp &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.015 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.048 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.077 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 186283211 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.63 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+ 
+---
+
+# Two sample tests
+
+
+- T - test
+
+- Mann Whitney U Test (Wilcoxon Rank Sum Test) 
+
+
+---
+
+## T-test
+ 
+A t-test is a method used to determine if there 
+is a significant difference between the means 
+of two groups based on a sample of data.
+
+The test relies on a set of assumptions for it
+to be interpreted properly and with validity.
+Among these assumptions, the data must be randomly
+sampled from the population of interest and 
+that the data variables follow a normal
+distribution.
+
+
+---
+
+## T-test assumptions
+
+1. The data are continuous (not discrete).
+
+2. The data follow the normal probability distribution.
+
+3. The variances of the two populations are equal. (If not, the Aspin-Welch Unequal-Variance test is used.)
+
+4. The two samples are independent. There is no relationship between the individuals in one sample as compared to the other (as there is in the paired t-test). 
+
+5. Both samples are simple random samples from their respective populations. Each individual in the population has an equal probability of being selected in the sample.
+ 
+
+
+---
+
+## T-test formula
+
+Test Statistic (equal variances):
+
+ 
+`\(T  = \frac{\overline{x}_{1} - \overline{x}_{2}}{S_{p}\sqrt(1/N_{1} + 1/N_{2})}\)` 
+
+where:
+`\(S^{2}_{p}\)` = `\(\frac{(N_{1}-1)s^{2}_{1} + (N_{1}-1)s^{2}_{1}}{N_{1}+N_{2}-2}\)`
+
+ 
+
+---
+ 
+## T-test visulize boxplots
+
+.panelset[
+.panel[.panel-name[R Code]
+
+
+```r
+ggplot(tcga , aes(gender, PTEN_exp, fill = gender))  +
+  geom_boxplot() +
+  scale_fill_manual( values = c("yellow", "blue")) + 
+  theme(legend.position = "none") +
+  labs(title = "PTEN expression" , x = "Gender", y = "expression")  
+```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-20-1.png" width="100%" /&gt;
+]
+]
+
+
+
+ 
+---
+ 
+## T-test Visualize data Histograms
+  
+.panelset[
+.panel[.panel-name[R Code]
+
+
+
+```r
+  ggplot(tcga, aes(x=PTEN_exp, fill=gender)) +
+  scale_fill_manual( values = c("red", "blue")) + 
+  geom_histogram( alpha=0.6, position="identity")
+```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-21-1.png" width="100%" /&gt;
+]
+]
+
+
+
+
+---
+
+
+## T-test R call
+
+
+```r
+t.test( PTEN_exp ~ gender, data = tcga,
+        alternative = c("two.sided"))
+```
+
+```
+
+	Welch Two Sample t-test
+
+data:  PTEN_exp by gender
+t = 3.1297, df = 702.6, p-value = 0.001822
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+  46.83934 204.52754
+sample estimates:
+mean in group FEMALE   mean in group MALE 
+            2057.036             1931.353 
+```
+
+
+
+
+---
+
+
+## Mann Whitney U Test (Wilcoxon Rank Sum Test) 
+
+ 
+A popular non-parametric test to compare outcomes between two independent groups is the Mann Whitney U test. The Mann Whitney U test, sometimes called the Mann Whitney Wilcoxon Test or the Wilcoxon Rank Sum Test, is used to test whether two samples are likely to derive from the same population (i.e., that the two populations have the same shape). 
+
+It can also be used on related samples or matched samples to assess whether their population mean ranks differ (i.e. it is a paired difference test). It can be used as an alternative to the paired Student's t-test when the distribution of the difference between two samples' means cannot be assumed to be normally distributed.   
+
+
+
+---
+
+## Wilcoxon test: Histograms
+  
+.panelset[
+
+.panel[.panel-name[Plot]
+
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-23-1.png" width="100%" /&gt;
+]
+
+.panel[.panel-name[R Code]
+
+
+```r
+mplot &lt;- ggplot(tcga %&gt;% filter(gender == "MALE"), 
+                aes(x = BUB1_exp )) +
+  geom_histogram(  colour = "black", position = "dodge") +
+  ggtitle("Males") 
+
+wplot &lt;- ggplot(tcga  %&gt;% filter(gender == "FEMALE"), 
+                aes(x = BUB1_exp)) +
+  geom_histogram(  colour= "black", position = "dodge")  +
+  ggtitle("Females") 
+  
+grid.arrange(mplot,wplot, ncol=2) 
+```
+]
+]
+
+
+
+---
+ 
+## Wilcoxon test visulize boxplots gender
+  
+.panelset[
+.panel[.panel-name[R Code]
+
+
+
+```r
+ggplot(tcga , aes(gender, BUB1_exp, fill = gender))  +
+  geom_boxplot() +
+  scale_fill_manual( values = c("yellow", "blue")) + 
+  theme(legend.position = "none") +
+  labs(title = "BUB1 expression" , x = "Gender", y = "expression")  
+```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="05_slides-stats_files/figure-html/unnamed-chunk-24-1.png" width="100%" /&gt;
+]
+]
+
+
+
+---
+
+
+## Wilcoxon test gender
+
+```r
+ wilcox.test(BUB1_exp ~ gender, data = tcga,
+                   alternative = c("two.sided"))
+```
+
+```
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  BUB1_exp by gender
+W = 93990, p-value = 0.0000007221
+alternative hypothesis: true location shift is not equal to 0
+```
+
+The p-value is very low so we reject the null hypothesis of no difference (0 location shift). 
+
+
+
+---
+
+
+
+## Thank you! 
+  
+  - The end
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-0.14.0.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "atom-one-light",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
