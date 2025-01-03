@@ -39,7 +39,7 @@ class: left bottom hide-count
 .talk-title[
 # Lea.orange[R]ning about Statistics
 
-Chi-Squared, Correlation, T-Test, Wilcoxon Rank Sum, and ANOVA
+Correlation, T-Test, Wilcoxon Rank Sum, and ANOVA
 ]
 
 .talk-author[
@@ -90,8 +90,6 @@ or to force either to be shown
  
   
 - Review of tables with janitor package
-  
-- Chi square test
 
 - Correlation
 
@@ -222,90 +220,6 @@ target_p2 %&gt;%
 ```
 
  
- 
----
-
-
-# Pearson’s chi-squared test
- 
-The chi squared test is a non-parametric test that can be applied to contingency tables with various dimensions. The name of the test originates from the chi-squared distribution, which is the distribution for the squares of independent standard normal variables. This is the distribution of the test statistic of the chi squared test, which is defined by the sum of chi-square values for all cells arising from the difference between a cell’s observed value and the expected value, normalized by the expected value.
- 
-`\(\chi ^{2}\)` = `\(\sum_{ij}\)` `\(\frac{(O_{ij} - E_{ij})^{2}}{E_{ij}}\)` 
-
-
-*   `\(\chi ^{2}\)` = chi square statistic
-*   `\(O_{ij}\)` = observed value
-*   `\(E_{ij}\)` = expected value
-
-
----
-## Pearson’s chi-squared test
- 
-The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
-
- 
-
-```
-                      race     female       male      Total
-                     asian   9   (7%)   8   (3%)  17   (4%)
- black or african american  15  (12%)  27  (11%)  42  (11%)
-          pacific islander   1   (1%)   2   (1%)   3   (1%)
-                   Unknown  14  (11%)  22   (9%)  36  (10%)
-                     white  84  (68%) 196  (77%) 280  (74%)
-                     Total 123 (100%) 255 (100%) 378 (100%)
-```
- 
-
-
----
-
-## Pearson’s chi-squared test
- 
-The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
-
- 
-
-
-``` r
-target_p2 %&gt;% tabyl(race, gender, show_na = FALSE) %&gt;%
-  chisq.test()
-```
-
-```
-
-	Pearson's Chi-squared test
-
-data:  .
-X-squared = 4.9009, df = 4, p-value = 0.2976
-```
- 
-The p-value is not low enough to reject the null hypothesis that there is no association between variables. 
-
----
-
-## Pearson’s chi-squared test
- 
-.panelset[
-.panel[.panel-name[R Code]
-
-
-``` r
-ggplot(target_p2 %&gt;% filter(!is.na(race)),
-       aes(x = gender, fill = race )) +  
-  geom_bar(position = "fill") +
-  labs(y = "proportion")
-```
-]
-
-.panel[.panel-name[Plot]
-
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
-]
-]
- 
-
-
-
 ---
  
 # Correlation 
@@ -445,7 +359,7 @@ ggplot(target_p2) +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-11-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-10-1.png" width="100%" /&gt;
 ]
 ]
  
@@ -473,7 +387,7 @@ ggplot(target_p2) +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-12-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-11-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -499,7 +413,7 @@ ggplot(target_p2) +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-13-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-12-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -551,7 +465,7 @@ The Spearman correlation evaluates the monotonic relationship between two contin
 
 
  
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-16-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-15-1.png" width="100%" /&gt;
 
 
 ---
@@ -722,7 +636,7 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-19-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-18-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -747,7 +661,7 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-20-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-19-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -802,7 +716,7 @@ It can also be used on related samples or matched samples to assess whether thei
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-22-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-21-1.png" width="100%" /&gt;
 ]
 
 .panel[.panel-name[R Code]
@@ -846,7 +760,7 @@ ggplot(target_p2 , aes(gender, NOTCH1, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-23-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-22-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -889,7 +803,7 @@ Analysis of variance, or ANOVA, is performed to assess if the variance between g
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-25-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-24-1.png" width="100%" /&gt;
 ]
 
 .panel[.panel-name[R Code]
@@ -933,7 +847,7 @@ ggplot(target_p2 , aes(gender, PAX5, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-26-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-25-1.png" width="100%" /&gt;
 ]
 ]
 

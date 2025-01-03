@@ -1,6 +1,6 @@
 ---
 title: "Lea.orange[R]ning about Statistics"
-subtitle: "Chi-Squared, Correlation, T-Test, Wilcoxon Rank Sum, and ANOVA"
+subtitle: "Correlation, T-Test, Wilcoxon Rank Sum, and ANOVA"
 author: 
   - Zachary Thompson 
   - Alex Soupir
@@ -145,8 +145,6 @@ or to force either to be shown
  
   
 - Review of tables with janitor package
-  
-- Chi square test
 
 - Correlation
 
@@ -226,85 +224,6 @@ target_p2 %>%
 ```
 
  
- 
----
-
-
-# Pearson’s chi-squared test
- 
-The chi squared test is a non-parametric test that can be applied to contingency tables with various dimensions. The name of the test originates from the chi-squared distribution, which is the distribution for the squares of independent standard normal variables. This is the distribution of the test statistic of the chi squared test, which is defined by the sum of chi-square values for all cells arising from the difference between a cell’s observed value and the expected value, normalized by the expected value.
- 
-$\chi ^{2}$ = $\sum_{ij}$ $\frac{(O_{ij} - E_{ij})^{2}}{E_{ij}}$ 
-
-
-*   $\chi ^{2}$ = chi square statistic
-*   $O_{ij}$ = observed value
-*   $E_{ij}$ = expected value
-
-
----
-## Pearson’s chi-squared test
- 
-The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
-
- 
-```{r chisqtest, echo=FALSE ,  include=TRUE}
- target_p2 %>% 
-  tabyl(race, gender, show_na = FALSE ) %>% 
-  adorn_totals(where = c("row","col")) %>% 
-  adorn_percentages(denominator = "col") %>% 
-  adorn_pct_formatting(digits = 0)   %>% 
-  adorn_ns(position = "front") 
- 
-
- 
-```
- 
-
-
----
-
-## Pearson’s chi-squared test
- 
-The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
-
- 
-
-```{r chisqtest1, eval=TRUE,  include=TRUE}
- 
-target_p2 %>% tabyl(race, gender, show_na = FALSE) %>%
-  chisq.test()
-
-```
- 
-The p-value is not low enough to reject the null hypothesis that there is no association between variables. 
-
----
-
-## Pearson’s chi-squared test
- 
-.panelset[
-.panel[.panel-name[R Code]
-
-```{r geombar, echo = TRUE, fig.show = "hide"}
-ggplot(target_p2 %>% filter(!is.na(race)),
-       aes(x = gender, fill = race )) +  
-  geom_bar(position = "fill") +
-  labs(y = "proportion")
-
-```
-]
-
-.panel[.panel-name[Plot]
-
-```{r ref.label = "geombar", echo = FALSE}
-```
-]
-]
- 
-
-
-
 ---
  
 # Correlation 
