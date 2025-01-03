@@ -35,7 +35,7 @@
       const key = getKey(el)
       if (!key) return
       stored[key] = html2json(el)
-      Cookies.set(docId.id, JSON.stringify(stored), { expires: docId.expires })
+      Cookies.set(docId.id, JSON.stringify(stored), { expires: docId.expires, sameSite: 'None', secure: true })
     }
 
     function updateElement (el) {
@@ -46,6 +46,14 @@
       stored = JSON.parse(stored)
       if (!Object.keys(stored).includes(key)) return
       el.innerHTML = json2html(stored[key])
+    }
+
+    function setIsEditingClass () {
+      document.body.classList.add('xe-editable_is-editing')
+    }
+
+    function removeIsEditingClass () {
+      document.body.classList.remove('xe-editable_is-editing')
     }
 
     window.editable = {
@@ -64,12 +72,18 @@
 
     editables.forEach(el => {
       el.setAttribute('contenteditable', true)
+      el.setAttribute('autocomplete', 'off')
+      el.setAttribute('autocorrect', 'off')
+      el.setAttribute('spellcheck', false)
       updateElement(el)
     })
 
     editables.forEach(function (el) {
       el.addEventListener('focus', function () {
-        console.log('[editable] blocking shortcuts')
+        if (window.editable.debug) console.log('[editable] blocking shortcuts')
+        setIsEditingClass()
+        slideshow.pause()
+        el.addEventListener('keyup', blockEvents)
         el.addEventListener('keydown', blockEvents)
         el.addEventListener('keypress', blockEvents)
       })
@@ -77,12 +91,15 @@
         el.willStore = true
       })
       el.addEventListener('blur', function () {
-        console.log('[editable] unblocking shortcuts')
+        if (window.editable.debug) console.log('[editable] unblocking shortcuts')
+        slideshow.resume()
+        removeIsEditingClass()
+        el.removeEventListener('keyup', blockEvents)
         el.removeEventListener('keydown', blockEvents)
         el.removeEventListener('keypress', blockEvents)
         if (el.willStore) {
           el.willStore = false
-          console.log('[editable] storing update html')
+          if (window.editable.debug) console.log('[editable] storing update html')
           storeElement(el)
         }
       })

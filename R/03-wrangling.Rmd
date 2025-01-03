@@ -9,13 +9,13 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-## Importing TCAG data 
+## Importing TARGET-ALL-P2 data 
 
 ```{r}
 
 library(readr)
-clinical <- read_csv(here::here("data/tcga-clinical.csv"))
-gene_exp <- read_csv(here::here("data/tcga-gene-exp.csv"))
+clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"), )
+gene_exp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
 
 ```
 

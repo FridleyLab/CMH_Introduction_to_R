@@ -3,6 +3,7 @@ title: "Data visualization"
 subtitle: "ggplot2"
 author: 
   - Ram Thapa
+  - Alex Soupir
 institute: "Moffitt Cancer Center"
 date: "June 30, 2021"
 output:
@@ -157,17 +158,13 @@ Key features of tidy data:
 > *Most of plotting problems in ggplot2 boil down to data wrangling problems*
 
 ---
-```{r data, echo = FALSE}
+```{r data, echo = FALSE, message = FALSE}
 library(tidyverse)
 library(flipbookr)
 library(ggdark)
 
-tcga_clinical <- read_csv(here::here("data", "tcga-clinical-viz.csv"))
-```
-
-
-```{r xaringan-panelset, echo=FALSE}
-xaringanExtra::use_panelset()
+target_clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"), name_repair = "unique")
+message(dim(target_clinical))
 ```
 
 `ggplot()` is the main plotting function and provides template where plots are constructed in layers. It creates a coordinate system where you can add layers to.
@@ -176,7 +173,7 @@ xaringanExtra::use_panelset()
 .panel[.panel-name[R Code]
 
 ```{r ggplot, echo = TRUE, fig.show = "hide"}
-ggplot(data = tcga_clinical) 
+ggplot(data = target_clinical) 
 ```
 ]
 
@@ -203,8 +200,8 @@ Each aesthetic can be mapped to a variable (or set to a constant value) by assoc
 
 ```{r aes, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height))  #<<
+  data = target_clinical,
+  mapping = aes(x = age_at_index, y = year_of_diagnosis))  #<<
 ```
 ]
 
@@ -225,8 +222,8 @@ Geometric object or `geom` defines the visual object and determines the type of 
 
 ```{r geom, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height)) + 
+  data = target_clinical,
+  mapping = aes(x = age_at_index, y = year_of_diagnosis)) + 
   geom_point()  #<<
 ```
 ]
@@ -264,9 +261,9 @@ Aesthetic | Description
 
 ```{r aes_color, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, 
-                y = height,
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis,
                 color = gender)) +  #<<
   geom_point()
 ```
@@ -287,11 +284,11 @@ ggplot(
 
 ```{r aes_size, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, 
-                y = height,
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis,
                 color = gender,
-                size = age_at_initial_pathologic_diagnosis)) +  #<<
+                size = primary_diagnosis)) +  #<<
   geom_point()
 
 ```
@@ -303,6 +300,7 @@ ggplot(
 ```
 ]
 ]
+
 ---
 ### [`r icons::icon_style(icons::fontawesome("link", style = "solid"), scale = 0.7, fill = "skyblue")` geom catalogue](https://ggplot2.tidyverse.org/reference/index.html#section-layers)
 
@@ -423,8 +421,8 @@ Transforms input variables to displayed values in plot (e.g. count number of obs
 
 ```{r statistics, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = stage)) +  
+  data = target_clinical,
+  mapping = aes(x = race)) +  
   geom_bar() #<<
 ```
 ]
@@ -441,8 +439,8 @@ Under the hood, data is transformed or new value is calculated by `stat` argumen
 .pull-left[
 ```{r}
 p1 <- ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = stage)) +  
+  data = target_clinical,
+  mapping = aes(x = race)) +  
   geom_bar() #<<
 ```
 ]
@@ -450,8 +448,8 @@ p1 <- ggplot(
 .pull-right[
 ```{r eval = FALSE}
 p2 <- ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = stage)) +  
+  data = target_clinical,
+  mapping = aes(x = race)) +  
   geom_bar(stat = "count") #<<
 ```
 ]
@@ -585,16 +583,16 @@ ggplot2 adds a default scale for each of the aesthetics used in the plot
 
 ```{r scales, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  aes(x = weight, y = height, color = gender)) +  
+  data = target_clinical,
+  aes(x = age_at_index, y = year_of_diagnosis, color = gender)) +  
   geom_point() 
 ```
 
 ...is equivalent to 
 ```{r echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height, color = gender)) +  
+  data = target_clinical,
+  mapping = aes(x = age_at_index, y = year_of_diagnosis, color = gender)) +  
   geom_point() +
   scale_x_continuous() + 
   scale_y_continuous() + 
@@ -617,13 +615,15 @@ We can override the defaults by adding the `scale` function
 
 ```{r scales2, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height, color = gender)) +  
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis,
+                color = gender)) +  
   geom_point() +
   scale_x_continuous(
-    "Weight (kg)", limits = c(40, 180), breaks = seq(40, 180, 20)) + 
+    "Age", limits = c(0, 30), breaks = seq(0, 30, 5)) + 
   scale_y_continuous(
-    "Height (cm)", limits = c(120, 200), breaks = seq(120, 200, 20)) + 
+    "Calendar Year", limits = c(2004, 2012), breaks = seq(2004, 2012, 2)) + 
   scale_color_discrete(
     "Sex", na.value = "red")
 ```
@@ -647,11 +647,12 @@ Before {`ggplot2`} v3.0.0 the variables used for faceting could only be passed a
 
 ```{r eval = FALSE}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height)) +  
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis)) +  
   geom_point() +
-  # facet_grid(gender ~ tumor_tissue_site)
-  facet_grid(rows = vars(gender), cols = vars(tumor_tissue_site))
+  # facet_grid(gender ~ race)
+  facet_grid(rows = vars(gender), cols = vars(race))
 ```
 
 ---
@@ -665,11 +666,12 @@ There are two types of facetting:
 
 ```{r facet-wrap, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height)) +  
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis)) +  
   geom_point() +
-  # facet_wrap(~ tumor_tissue_site, ncol = 2) 
-  facet_wrap(vars(tumor_tissue_site), ncol = 2)
+  # facet_wrap(~ race, ncol = 2) 
+  facet_wrap(vars(race), ncol = 2)
 
 ```
 ]
@@ -690,11 +692,12 @@ ggplot(
 
 ```{r facet-grid, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height)) +  
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis)) +  
   geom_point() +
-  # facet_grid(gender ~ tumor_tissue_site)
-  facet_grid(rows = vars(gender), cols = vars(tumor_tissue_site))
+  # facet_grid(gender ~ race)
+  facet_grid(rows = vars(gender), cols = vars(race))
 
 ```
 ]
@@ -728,10 +731,12 @@ rectangle | `element_rect()`
 
 ```{r theme, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height, color = gender)) +  
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis, 
+                color = gender)) +  
   geom_point() +
-  facet_wrap(~ tumor_tissue_site, nrow = 1)
+  facet_wrap(~ race, nrow = 1)
 ```
 ]
 
@@ -750,10 +755,9 @@ ggplot(
 
 ```{r theme2, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height, color = gender)) +  
-  geom_point() +
-  facet_wrap(~ tumor_tissue_site, nrow = 1) +
+  data = target_clinical,
+  mapping=aes(x= age_at_index, y= year_of_diagnosis, color = gender)) +  
+  geom_point() + facet_wrap(~ race, nrow = 1) +
   theme(axis.title = element_text(size = 15, color = "gray80"),
         axis.text = element_text(size = 13, color = "gray80"),
         strip.text = element_text(size = 16, color = "gray80"),
@@ -784,10 +788,12 @@ We can avoid the `theme()` function by using built-in themes
 
 ```{r theme_builtin, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight, y = height, color = gender)) +  
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis, 
+                color = gender)) +  
   geom_point() +
-  facet_wrap(~ tumor_tissue_site, nrow = 1) +
+  facet_wrap(~ race, nrow = 1) +
   theme_dark(base_size = 13)
 ```
 
@@ -816,9 +822,9 @@ Set a default theme for the rest of your plots using `theme_set()` at the top of
 inside `ggplot()` call
 ```{r echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight,   #<<
-                y = height,  #<<
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis, 
                 color = gender)) +  #<<
   geom_point()
 ```
@@ -830,11 +836,12 @@ ggplot(
 inside `geom_*()` layer
 ```{r echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical) + 
+  data = target_clinical) + 
   geom_point(    #<<
-    mapping = aes(x = weight,   #<<
-                  y = height,  #<<
-                  color = gender)) #<<
+    mapping = 
+      aes(x = age_at_index,
+          y = year_of_diagnosis, 
+          color = gender)) #<<
 ```
 ]
 
@@ -848,9 +855,9 @@ However, when we start adding more layers, the distinction becomes more importan
 
 ```{r global_aes, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight,   #<<
-                y = height,    #<<
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis, 
                 color = gender)) +     #<<
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) 
@@ -874,9 +881,9 @@ ggplot(
 
 ```{r local_aes, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight,  
-                y = height)) +   
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis)) +   
   geom_point(aes(color = gender)) + #<<
   geom_smooth(method = "lm", se = FALSE) 
 ```
@@ -920,9 +927,9 @@ Aesthetic property can also be set to a single value (constant) by specifying it
 ### Mapping
 ```{r mapping, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight,  
-                y = height)) +   
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis)) +   
   geom_point(aes(color = gender)) #<<
 ```
 
@@ -934,9 +941,9 @@ ggplot(
 ### Setting
 ```{r setting, echo = TRUE, fig.show = "hide"}
 ggplot(
-  data = tcga_clinical,
-  mapping = aes(x = weight,  
-                y = height)) +   
+  data = target_clinical,
+  mapping = aes(x = age_at_index,
+                y = year_of_diagnosis)) +   
   geom_point(color = "blue") #<<
 ```
 
@@ -951,9 +958,10 @@ class: middle center
 
 ```{r ggplotflipbook, echo = FALSE, eval = FALSE}
 ggplot(
-  data = tcga_clinical) +
+  data = target_clinical) +
   aes(
-    x = height, y = weight, 
+    x = age_at_index,
+    y = year_of_diagnosis, 
     color = gender) +
   geom_point(
     size = 2.5, alpha = 0.8) +
@@ -963,9 +971,9 @@ ggplot(
   scale_color_viridis_d(
     begin = 0.5, end = 1) +
   labs(
-    x = "Weight (kg)",
-    y = "Height (cm)") +
-  facet_wrap(~ tumor_tissue_site) +
+    x = "Age at Index",
+    y = "Calendar Year") +
+  facet_wrap(~ race) +
   dark_theme_minimal(
     base_size = 15)
 ```

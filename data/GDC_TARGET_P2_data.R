@@ -94,3 +94,9 @@ tpm_dat = exp_data %>%
 
 #save data
 fwrite(tpm_dat, "data/TARGET_P2_tpm.csv")
+
+
+
+#remove clinical columns with all missing value
+clinical = clinical[,!apply(clinical, 2, function(x) all(x == "'--")), with = FALSE]
+fwrite(clinical, "data/TARGET_P2_clinical.tsv")
