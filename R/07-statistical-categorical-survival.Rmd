@@ -1,0 +1,56 @@
+---
+title: "Categorial Stats and Survival - VII"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(correlation)
+```
+
+## Importing TARGET-ALL-P2 data 
+
+```{r}
+
+clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"))
+gene_exp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
+
+```
+
+## Merging data 
+
+```{r}
+
+
+```
+
+## Perform Chi-Sq between two categorical variables
+
+```{r}
+
+
+```
+
+## Perform Fisher's Exact test between two categorical variables
+
+```{r}
+
+
+```
+
+## Test for survival differences of a categorical variable
+
+```{r}
+
+
+```
+
+## Create a multiple regression model of two different genes and clinical variable
+
+```{r}
+
+
+```
+

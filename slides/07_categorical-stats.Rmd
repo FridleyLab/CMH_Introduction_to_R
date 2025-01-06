@@ -1,9 +1,9 @@
 ---
 title: "Lea.orange[R]ning about Statistics"
-subtitle: "Chi-Squared, Fishers Exact, and Survival with Kaplain Meier"
+subtitle: "Chi-Squared, Fishers Exact, and Survival with Kaplan Meier"
 author: 
-  - Zachary Thompson 
   - Alex Soupir
+  - Zachary Thompson 
 institute: "Moffitt Cancer Center"
 date: "Feb 28, 2025"
 output:
@@ -40,15 +40,15 @@ options(width = 70)
 
 
   #library(easystats)
+  library(fitdistrplus)
   library(tidyverse)
   library(kableExtra)
   library(ggplot2)
   library(janitor)
   library(gridExtra)
-  library(broom)
-   
+  library(survival)
+  library(survminer)
 
-   
 # MERGE
 clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"))
 geneexp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
@@ -64,6 +64,39 @@ target_p2 <- left_join(clinical, geneexp, by = "case_submitter_id") %>%
                        "pacific islander",
                        race))
 #dim(target_p2)
+
+#sim survival times
+survs = target_p2$days_to_death %>% as.numeric()
+survs = survs[!is.na(survs)]
+
+# Fit distributions to the observed survival data
+set.seed(333)
+fit_weibull <- fitdist(survs, "weibull")
+fit_lognormal <- fitdist(survs, "lnorm")
+
+# Compare fits
+#plot(fit_weibull) #better fit i think
+#plot(fit_lognormal)
+target_p2 = target_p2 %>% 
+    mutate(event = case_when(vital_status == "Alive" ~ 0,
+                             TRUE ~ 1)) %>%
+    rowwise() %>%
+    mutate(days_to_death = case_when(vital_status == "Dead" ~ as.numeric(days_to_death),
+                                     TRUE ~ rweibull(n = 1, shape = fit_weibull$estimate["shape"], scale = fit_weibull$estimate["scale"]) %>%
+                                       round(., 0))) %>% 
+  ungroup()
+
+prep_summary = function(output){
+  # Escape special characters
+  escaped_output <- gsub("&", "&amp;", output) # Escape &
+  escaped_output <- gsub("<", "&lt;", escaped_output) # Escape <
+  escaped_output <- gsub(">", "&gt;", escaped_output) # Escape >
+  escaped_output <- gsub("\\*", "&#42;", escaped_output) # Escape *
+  escaped_output <- gsub("---", "&#45;&#45;&#45;", escaped_output) # Escape ---
+  escaped_output <- gsub("%", "&#37", escaped_output)
+  return(escaped_output)
+}
+
 
 ```
 
@@ -150,7 +183,7 @@ or to force either to be shown
 
 - Fishers Exact Test
 
-- Survival Analysis using Kaplain Meier
+- Survival Analysis using Kaplan Meier
 
 
 ---
@@ -300,4 +333,201 @@ ggplot(target_p2 %>% filter(!is.na(race)),
 ]
 ]
  
+---
 
+
+# Fisher's Exact Test
+
+Fisher's Exact Test is a statistical test used to determine if there are nonrandom associations between two categorical variables. Unlike the Chi-Squared test, Fisher's Exact Test is particularly useful for smaller sample sizes or when the expected frequencies in some cells of the contingency table are very low.
+
+The test calculates the probability of observing the given contingency table (or one more extreme) under the null hypothesis of independence. This is done using the hypergeometric distribution.
+
+**Key points about Fisher's Exact Test**:
+- It is an exact test, meaning it does not rely on large-sample approximations.
+- Often used when the contingency table contains cells with expected frequencies < 5.
+ 
+---
+
+
+## Fisher's Exact Test
+
+The formula for Fisher's Exact Test relies on the hypergeometric probability:
+
+$$ P = \frac{\binom{a+b}{a} \binom{c+d}{c}}{\binom{n}{a+c}} $$
+
+Where:
+- $a$, $b$, $c$, and $d$ are the cell counts in a 2x2 table:
+
+|   | A | B |
+|---|---|---|
+| C | a | b |
+| D | c | d |
+ 
+---
+
+
+## Fisher's Exact Test
+
+The formula for Fisher's Exact Test relies on the hypergeometric probability:
+
+$$ P = \frac{\binom{a+b}{a} \binom{c+d}{c}}{\binom{n}{a+c}} $$
+
+- $n$ is the total number of observations.
+- $\binom{x}{y}$ is the number of combinations (x choose y).
+
+Fisher's Exact Test is implemented in R using the `fisher.test()` function.
+
+
+---
+
+## Fisher's Exact Test
+ 
+.panelset[
+.panel[.panel-name[Contingency Table]
+
+Remember our contingency table looks like this:
+
+```{r fishers_contingency, echo = TRUE, fig.show = "hide"}
+target_p2 %>% tabyl(race, gender, show_na = FALSE)
+```
+
+]
+
+.panel[.panel-name[Performing Test]
+
+Performing the Fisher's Exact Test is the same as Chi-Squared:
+
+```{r fishers_test, echo = TRUE, fig.show = "hide"}
+target_p2 %>% tabyl(race, gender, show_na = FALSE) %>%
+  fisher.test()
+```
+
+We see that we would **fail to reject** the null hypothesis that `race` and `gender` are independent in our dataset.
+
+]
+]
+ 
+---
+
+# Survival with Kaplan-Meier
+
+Kaplan-Meier analysis is a non-parametric method used to estimate the probability of survival over time, based on observed survival data. It is often applied when studying time-to-event data, such as the time until death, disease recurrence, or another defined endpoint.
+
+The Kaplan-Meier estimator calculates the survival probability at each time point where an event (e.g., death) occurs, considering the number of individuals at risk at that time. 
+
+This is used over traditional modeling (like linear regression) because it takes into account censored data (i.e., when a patient hasn't died but are no longer in contact/lost to follow-up).
+
+***Time to last follow-up is simulated for those who had not died. Do not interpret the results as if they are real.***
+
+---
+
+## Survival with Kaplan-Meier
+
+.panelset[
+.panel[.panel-name[Basic Form]
+
+Data preparation. Our `event` variable (typically death but could be any event like recurrence or trial end) must be in `1`/`0` format for 'yes' or 'no' if the event occurred. 
+
+```{r surv_prep, echo = TRUE, fig.show = "hide", eval = FALSE}
+target_p2 %>% 
+  select(days_to_death, vital_status) %>%
+  mutate(event = case_when(vital_status == "Alive" ~ 0,
+                           TRUE ~ 1)) %>%
+  head() %>% data.frame()
+```
+
+```{r comment=NA, results = "asis", echo = FALSE}
+# Capture the output of the summary
+dat = target_p2 %>% 
+  select(days_to_death, vital_status) %>%
+  mutate(event = case_when(vital_status == "Alive" ~ 0,
+                           TRUE ~ 1)) %>%
+  head() %>% data.frame() %>% capture.output()
+
+# Wrap in <pre> tags with the remark-code-small class
+cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(dat, collapse = "\n")))
+```
+
+]
+
+.panel[.panel-name[At Risk]
+
+Takes form of `Surv(time, event)`
+
+```{r surv_model, echo = TRUE, fig.show = "hide", eval = FALSE}
+km_fit <- survfit(Surv(days_to_death, event) ~ 1, data=target_p2)
+summary(km_fit, times = seq(0, 4000, by = 500))
+```
+
+```{r comment=NA, results = "asis", echo = FALSE}
+km_fit <- survfit(Surv(days_to_death, event) ~ 1, data=target_p2)
+dat = summary(km_fit, times = seq(0, 4000, by = 500)) %>% capture.output()
+dat_prepped = prep_summary(dat)
+
+# Wrap in <pre> tags with the remark-code-small class
+cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(dat_prepped, collapse = "\n")))
+```
+
+]
+
+.panel[.panel-name[Plot Risk]
+
+```{r surv_plot, echo = TRUE}
+plot(km_fit, xlab = "Days", main = "Kaplan-Meier Plot")
+```
+
+]
+]
+
+---
+
+## Survival Analysis 
+
+.panelset[
+.panel[.panel-name[R Code]
+
+```{r surv_gender_plot, echo = TRUE, fig.show = "hide"}
+km_fit_gender <- survfit(Surv(days_to_death, event) ~ gender, data=target_p2)
+plot(km_fit_gender, lty=2:3)
+legend(100, .3, c("Female", "Male"), lty = 2:3) 
+```
+]
+
+.panel[.panel-name[Plot]
+
+```{r ref.label = "surv_gender_plot", echo = FALSE}
+```
+]
+]
+
+---
+
+## Survival Analysis (CoxPH)
+
+To extract model statistics we can fit using `coxph` instead of `survfit`
+
+```{r, echo = TRUE, fig.show = "hide", eval = FALSE}
+km_fit_gender_cph <- coxph(Surv(days_to_death, event) ~ gender, data=target_p2)
+summary(km_fit_gender_cph)
+```
+
+---
+
+## Survival Analysis (CoxPH)
+
+To extract model statistics we can fit using `coxph` instead of `survfit`
+
+```{r comment=NA, results = "asis", echo = FALSE}
+km_fit_gender_cph <- coxph(Surv(days_to_death, event) ~ gender, data=target_p2)
+dat = summary(km_fit_gender_cph) %>% capture.output()
+dat_prepped = prep_summary(dat)
+
+# Wrap in <pre> tags with the remark-code-small class
+cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(dat_prepped, collapse = "\n")))
+```
+
+The p-value fo r `gendermale` is greater than larger than our typical 0.05 indicating there is not a significant difference between gender survival times.
+
+---
+
+## Questions?
