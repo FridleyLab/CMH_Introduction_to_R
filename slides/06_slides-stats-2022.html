@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Lea.orange[R]ning about Statistics - YEAH!!!</title>
+    <title>Lea.orange[R]ning about Statistics</title>
     <meta charset="utf-8" />
     <meta name="author" content="Zachary Thompson" />
-    <meta name="date" content="2022-05-09" />
+    <meta name="author" content="Alex Soupir" />
+    <meta name="date" content="2025-01-06" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view/tile-view.js"></script>
@@ -37,18 +38,18 @@ class: left bottom hide-count
 
 .talk-meta[
 .talk-title[
-# Lea.orange[R]ning about Statistics - YEAH!!!
+# Lea.orange[R]ning about Statistics
 
 Correlation, Scatterplots and Regression! 
 ]
 
 .talk-author[
-Zachary Thompson&lt;br&gt;
+Zachary Thompson &amp;middot; Alex Soupir&lt;br&gt;
 .moffitt-gray[Moffitt Cancer Center]
 ]
 
 .talk-date.moffitt-gray[
-May 09, 2022
+January 06, 2025
 ]
 ]
 
@@ -95,7 +96,7 @@ or to force either to be shown
 
 - Univariate regresssion
 
-- MultivarIABLE reression
+- Multivariable regression
 
  
  
@@ -109,9 +110,9 @@ or to force either to be shown
 .panel[.panel-name[R Code]
 
 
-```r
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
+``` r
+ggplot((target_p2),
+       aes(MYC, TP53)) + 
   geom_point() 
 ```
 ]
@@ -133,9 +134,9 @@ ggplot(tcga) +
 .panel[.panel-name[R Code]
 
 
-```r
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
+``` r
+ggplot((target_p2),
+       aes(MYC, TP53)) + 
   geom_point(aes(colour = gender)) 
 ```
 ]
@@ -158,10 +159,10 @@ ggplot(tcga) +
 .panel[.panel-name[R Code]
 
 
-```r
-ggplot(tcga %&gt;% filter(!is.na(smoking))) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
-  geom_point(aes(shape = smoking, colour = smoking)) 
+``` r
+ggplot((target_p2),
+       aes(MYC, TP53)) + 
+  geom_point(aes(shape = race, colour = gender)) 
 ```
 ]
 
@@ -170,38 +171,6 @@ ggplot(tcga %&gt;% filter(!is.na(smoking))) +
 &lt;img src="06_slides-stats-2022_files/figure-html/unnamed-chunk-4-1.png" width="100%" /&gt;
 ]
 ]
- 
- 
- 
----
-
-## Scatter plots 
-
-  
-
-.panelset[
-.panel[.panel-name[R Code]
-
-
-```r
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
-  geom_point(aes(size = stage,colour = weight)) 
-```
-]
-
-.panel[.panel-name[Plot]
-
-&lt;img src="06_slides-stats-2022_files/figure-html/unnamed-chunk-5-1.png" width="100%" /&gt;
-]
-]
- 
-
-
-
-
- 
-
 
 
 ---
@@ -228,7 +197,7 @@ Very common :
 
 *   n is the sample size
 *   `\(x_{i}\)` and `\(y_{i}\)`  are the individual sample points indexed with i
-*   `\(\overline{x} = \frac{1}{n}\sum_{i = 1}^{n} x_{i}\)` is the smaple mean of x (similarly y)
+*   `\(\overline{x} = \frac{1}{n}\sum_{i = 1}^{n} x_{i}\)` is the sample mean of x (similarly y)
 
 
 
@@ -238,17 +207,17 @@ Very common :
  
 
 
-```r
-r1 &lt;- tcga %&gt;% correlation::cor_test("DUOXA1_exp", 
-                                          "DUOX1_exp", 
+``` r
+r1 &lt;- target_p2 %&gt;% correlation::cor_test("CD3E", 
+                                          "IL7R", 
                                           method = c("pearson") ) 
  
-r2 &lt;- tcga %&gt;% correlation::cor_test("BUB1_exp",
-                                          "C10orf32_exp",
+r2 &lt;- target_p2 %&gt;% correlation::cor_test("CD3E",
+                                          "CD19",
                                           method = c("pearson") ) 
  
-r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp", 
-                                          "DTL_exp", 
+r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC", 
+                                          "KRAS", 
                                           method = c("pearson") )
 ```
 
@@ -258,12 +227,12 @@ r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp",
  
 
 
-```r
+``` r
  knitr::kable(bind_rows(r1,r2,r3 ), format = 'html', digits = 3) %&gt;%
   kable_styling(font_size = 12)
 ```
 
-&lt;table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;"&gt;
+&lt;table class="table" style="font-size: 12px; color: black; margin-left: auto; margin-right: auto;"&gt;
  &lt;thead&gt;
   &lt;tr&gt;
    &lt;th style="text-align:left;"&gt; Parameter1 &lt;/th&gt;
@@ -281,43 +250,43 @@ r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp",
  &lt;/thead&gt;
 &lt;tbody&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; DUOXA1_exp &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; DUOX1_exp &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.918 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; CD3E &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IL7R &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.215 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.908 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.927 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 74.789 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1041 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.117 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.309 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.266 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 376 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; BUB1_exp &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; C10orf32_exp &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.600 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; CD3E &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; CD19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.545 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.638 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.560 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -24.227 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1041 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.612 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.470 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -12.592 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 376 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; BRAF_exp &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; DTL_exp &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.020 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MYC &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; KRAS &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.169 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.041 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.080 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.642 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1041 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.521 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.265 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.069 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -3.325 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 376 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.001 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -330,18 +299,18 @@ r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp",
  
 
 
-```r
+``` r
  bind_rows(r1,r2,r3 ) 
 ```
 
 ```
-Parameter1 |   Parameter2 |     r |         95% CI | t(1041) |         p
-------------------------------------------------------------------------
-DUOXA1_exp |    DUOX1_exp |  0.92 | [ 0.91,  0.93] |   74.79 | &lt; .001***
-BUB1_exp   | C10orf32_exp | -0.60 | [-0.64, -0.56] |  -24.23 | &lt; .001***
-BRAF_exp   |      DTL_exp |  0.02 | [-0.04,  0.08] |    0.64 | 0.521    
+Parameter1 | Parameter2 |     r |         95% CI | t(376) |         p
+---------------------------------------------------------------------
+CD3E       |       IL7R |  0.21 | [ 0.12,  0.31] |   4.27 | &lt; .001***
+CD3E       |       CD19 | -0.54 | [-0.61, -0.47] | -12.59 | &lt; .001***
+MYC        |       KRAS | -0.17 | [-0.27, -0.07] |  -3.32 | &lt; .001***
 
-Observations: 1043
+Observations: 378
 ```
 
 
@@ -356,11 +325,11 @@ Observations: 1043
 .panel[.panel-name[R Code]
 
 
-```r
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
+``` r
+ggplot(target_p2) + 
+  aes(CD3E, IL7R) + 
   geom_point() + 
-  annotate(geom = "text", x = 10, y = 25000, 
+  annotate(geom = "text", x = 10, y = 800, 
            label = paste("r = ", round(r1$r, 2), sep = ""),
            color = "red")
 ```
@@ -368,7 +337,7 @@ ggplot(tcga) +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="06_slides-stats-2022_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
+&lt;img src="06_slides-stats-2022_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
 ]
 ]
  
@@ -384,12 +353,38 @@ ggplot(tcga) +
 .panel[.panel-name[R Code]
 
 
-```r
-ggplot(tcga) + 
-  aes(BUB1_exp, C10orf32_exp) + 
+``` r
+ggplot(target_p2) + 
+  aes(CD3E, CD19) + 
   geom_point() + 
-  annotate(geom = "text", x = 1000, y = 4000, 
+  annotate(geom = "text", x = 500, y = 1000, 
            label = paste("r = ", round(r2$r, 2), sep = ""),
+           color = "red")
+```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="06_slides-stats-2022_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
+]
+]
+
+ 
+
+---
+
+## Pearson Correlation Scatter Plot
+  
+.panelset[
+.panel[.panel-name[R Code]
+
+
+``` r
+ggplot(target_p2) + 
+  aes(MYC, KRAS) + 
+  geom_point() + 
+  annotate(geom = "text", x = 0, y = 325, 
+           label = paste("r = ", round(r3$r, 2), sep = ""),  
            color = "red")
 ```
 ]
@@ -402,31 +397,7 @@ ggplot(tcga) +
 
  
 
----
 
-## Pearson Correlation Scatter Plot
-  
-.panelset[
-.panel[.panel-name[R Code]
-
-
-```r
-ggplot(tcga) + 
-  aes(BRAF_exp, DTL_exp) + 
-  geom_point() + 
-  annotate(geom = "text", x = 0, y = 1100, 
-           label = paste("r = ", round(r3$r, 2), sep = ""),  
-           color = "red")
-```
-]
-
-.panel[.panel-name[Plot]
-
-&lt;img src="06_slides-stats-2022_files/figure-html/unnamed-chunk-11-1.png" width="100%" /&gt;
-]
-]
-
- 
 
  
 
@@ -439,19 +410,19 @@ ggplot(tcga) +
  
 
 
-```r
-tcga %&gt;% 
-  select(DUOXA1_exp, DUOX1_exp, BUB1_exp, BRAF_exp, DTL_exp ) %&gt;%
+``` r
+target_p2 %&gt;% 
+  select(CD3E, IL7R, CD19, MYC, KRAS) %&gt;%
   cor() %&gt;% round(.,2)
 ```
 
 ```
-           DUOXA1_exp DUOX1_exp BUB1_exp BRAF_exp DTL_exp
-DUOXA1_exp       1.00      0.92     0.40    -0.07    0.30
-DUOX1_exp        0.92      1.00     0.38    -0.05    0.30
-BUB1_exp         0.40      0.38     1.00     0.01    0.78
-BRAF_exp        -0.07     -0.05     0.01     1.00    0.02
-DTL_exp          0.30      0.30     0.78     0.02    1.00
+      CD3E IL7R  CD19   MYC  KRAS
+CD3E  1.00 0.21 -0.54  0.26 -0.19
+IL7R  0.21 1.00  0.07  0.13  0.16
+CD19 -0.54 0.07  1.00 -0.17  0.20
+MYC   0.26 0.13 -0.17  1.00 -0.17
+KRAS -0.19 0.16  0.20 -0.17  1.00
 ```
 
 
@@ -468,7 +439,7 @@ The Spearman correlation evaluates the monotonic relationship between two contin
 
 
 
-## Example of monotonic relationship
+## Spearman Correlation example of monotonic relationship
 
 
  
@@ -484,17 +455,17 @@ The Spearman correlation evaluates the monotonic relationship between two contin
  
 
 
-```r
-r1 &lt;- tcga %&gt;% correlation::cor_test("DUOXA1_exp", 
-                                          "DUOX1_exp", 
+``` r
+r1 &lt;- target_p2 %&gt;% correlation::cor_test("CD3E", 
+                                          "IL7R", 
                                           method = c("spearman") ) 
  
-r2 &lt;- tcga %&gt;% correlation::cor_test("BUB1_exp",
-                                          "C10orf32_exp",
+r2 &lt;- target_p2 %&gt;% correlation::cor_test("CD3E",
+                                          "CD19",
                                           method = c("spearman") ) 
  
-r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp", 
-                                          "DTL_exp", 
+r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC", 
+                                          "KRAS", 
                                           method = c("spearman") )
 ```
 
@@ -504,12 +475,12 @@ r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp",
  
 
 
-```r
+``` r
  knitr::kable(bind_rows(r1, r2, r3), format = 'html', digits = 3) %&gt;%
   kable_styling(font_size = 12)
 ```
 
-&lt;table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;"&gt;
+&lt;table class="table" style="font-size: 12px; color: black; margin-left: auto; margin-right: auto;"&gt;
  &lt;thead&gt;
   &lt;tr&gt;
    &lt;th style="text-align:left;"&gt; Parameter1 &lt;/th&gt;
@@ -526,85 +497,65 @@ r3 &lt;- tcga %&gt;% correlation::cor_test("BRAF_exp",
  &lt;/thead&gt;
 &lt;tbody&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; DUOXA1_exp &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; DUOX1_exp &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.905 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; CD3E &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; IL7R &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.315 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.892 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.915 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 18053045 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.218 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6165357 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; BUB1_exp &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; C10orf32_exp &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.796 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; CD3E &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; CD19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.629 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.818 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.772 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 339618298 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.688 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.562 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14665217 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; BRAF_exp &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; DTL_exp &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.015 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; MYC &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; KRAS &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.198 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.048 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.077 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 186283211 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.63 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.296 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.097 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10788140 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1043 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
----
+
  
-## Pearson Correlation 
- 
-
-
-```r
- bind_rows(r1,r2,r3 ) 
-```
-
-```
-Parameter1 |   Parameter2 |   rho |         95% CI |        S |         p
--------------------------------------------------------------------------
-DUOXA1_exp |    DUOX1_exp |  0.90 | [ 0.89,  0.92] | 1.81e+07 | &lt; .001***
-BUB1_exp   | C10orf32_exp | -0.80 | [-0.82, -0.77] | 3.40e+08 | &lt; .001***
-BRAF_exp   |      DTL_exp |  0.01 | [-0.05,  0.08] | 1.86e+08 | 0.630    
-
-Observations: 1043
-```
-
-
-
 ---
 
 ## Correllation Matrix 
  
 
 
-```r
-tcga %&gt;% 
-  select(DUOXA1_exp, DUOX1_exp, BUB1_exp, BRAF_exp, DTL_exp ) %&gt;%
+``` r
+target_p2 %&gt;% 
+  select(CD3E, IL7R, CD19, MYC, KRAS ) %&gt;%
   cor( method = c("spearman")) %&gt;% round(.,2)
 ```
 
 ```
-           DUOXA1_exp DUOX1_exp BUB1_exp BRAF_exp DTL_exp
-DUOXA1_exp       1.00      0.90     0.67    -0.11    0.62
-DUOX1_exp        0.90      1.00     0.66    -0.10    0.62
-BUB1_exp         0.67      0.66     1.00    -0.01    0.88
-BRAF_exp        -0.11     -0.10    -0.01     1.00    0.01
-DTL_exp          0.62      0.62     0.88     0.01    1.00
+      CD3E  IL7R  CD19   MYC  KRAS
+CD3E  1.00  0.32 -0.63  0.31 -0.18
+IL7R  0.32  1.00 -0.07  0.20  0.16
+CD19 -0.63 -0.07  1.00 -0.18  0.24
+MYC   0.31  0.20 -0.18  1.00 -0.20
+KRAS -0.18  0.16  0.24 -0.20  1.00
 ```
 
 
@@ -615,9 +566,9 @@ DTL_exp          0.62      0.62     0.88     0.01    1.00
 # Regression 
 
 
-- Univariate regresssion
+- Univariate regression
 
-- MultivarIABLE reression
+- Multivariable regression
 
 
 ---
@@ -656,18 +607,18 @@ DTL_exp          0.62      0.62     0.88     0.01    1.00
  
 
 
-```r
- lm(DUOX1_exp ~ DUOXA1_exp, data = tcga)
+``` r
+ lm(CD19 ~ PAX5, data = target_p2)
 ```
 
 ```
 
 Call:
-lm(formula = DUOX1_exp ~ DUOXA1_exp, data = tcga)
+lm(formula = CD19 ~ PAX5, data = target_p2)
 
 Coefficients:
-(Intercept)   DUOXA1_exp  
-     84.712        3.034  
+(Intercept)         PAX5  
+    19.1503       0.9563  
 ```
 
 ---
@@ -677,30 +628,29 @@ Coefficients:
  
 
 
-```r
-summary( lmfit &lt;-  lm(DUOX1_exp ~ DUOXA1_exp, data = tcga) )
+``` r
+summary( lmfit &lt;-  lm(CD19 ~ PAX5, data = target_p2) )
 ```
 
-```
-
+&lt;pre class='remark-code-small'&gt;
 Call:
-lm(formula = DUOX1_exp ~ DUOXA1_exp, data = tcga)
+lm(formula = CD19 ~ PAX5, data = target_p2)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--8924.8   -85.3   -70.7    41.8  5917.1 
+-314.93  -19.61  -18.97  -13.00  659.97 
 
 Coefficients:
-            Estimate Std. Error t value             Pr(&gt;|t|)    
-(Intercept) 84.71188   31.04085   2.729              0.00646 ** 
-DUOXA1_exp   3.03400    0.04057  74.789 &lt; 0.0000000000000002 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+            Estimate Std. Error t value Pr(&amp;gt;|t|)    
+(Intercept) 19.15032    5.45414   3.511    5e-04 &amp;#42;&amp;#42;&amp;#42;
+PAX5         0.95634    0.03735  25.606   &amp;lt;2e-16 &amp;#42;&amp;#42;&amp;#42;
+&amp;#45;&amp;#45;&amp;#45;
+Signif. codes:  0 '&amp;#42;&amp;#42;&amp;#42;' 0.001 '&amp;#42;&amp;#42;' 0.01 '&amp;#42;' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 824.9 on 1041 degrees of freedom
-Multiple R-squared:  0.8431,	Adjusted R-squared:  0.8429 
-F-statistic:  5593 on 1 and 1041 DF,  p-value: &lt; 0.00000000000000022
-```
+Residual standard error: 91.82 on 376 degrees of freedom
+Multiple R-squared:  0.6355,	Adjusted R-squared:  0.6346 
+F-statistic: 655.6 on 1 and 376 DF,  p-value: &amp;lt; 2.2e-16
+&lt;/pre&gt;
  
 
  
@@ -712,7 +662,7 @@ F-statistic:  5593 on 1 and 1041 DF,  p-value: &lt; 0.00000000000000022
 .panel[.panel-name[R Code]
 
 
-```r
+``` r
   par(mfrow=c(1,2))
   plot(lmfit, which=1:2)
 ```
@@ -736,15 +686,17 @@ F-statistic:  5593 on 1 and 1041 DF,  p-value: &lt; 0.00000000000000022
 .panel[.panel-name[R Code]
 
 
-```r
-ggplot(tcga, aes(DUOXA1_exp, DUOX1_exp) ) + 
+``` r
+r1 &lt;- target_p2 %&gt;% correlation::cor_test("PAX5", 
+                                          "CD19") 
+ggplot(target_p2, aes(PAX5, CD19) ) + 
   geom_point() +  
   geom_smooth(method = "lm", se=FALSE, color="purple", formula = y ~ x, size = 1) +
-  annotate(geom = "text", x = 10, y = 25000, 
+  annotate(geom = "text", x = 10, y = 775, 
            label = paste("r = ", round(r1$r, 2), sep = ""),
            color = "red") +
-  annotate(geom = "text", x = 1000, y = 20000, 
-           label = paste("DUOX1_exp = 84.7 + 3.03*DUOXA1_exp", sep = ""),  
+  annotate(geom = "text", x = 300, y = 750, 
+           label = paste("CD19 = 19.15 + 0.96*PAX5", sep = ""),  
            color = "purple")
 ```
 ]
@@ -767,15 +719,17 @@ ggplot(tcga, aes(DUOXA1_exp, DUOX1_exp) ) +
 .panel[.panel-name[R Code]
 
 
-```r
-ggplot(tcga, aes(DUOXA1_exp, DUOX1_exp)) + 
-  geom_point() + 
+``` r
+ggplot(target_p2, aes(PAX5, CD19) ) + 
+  geom_point() +  
   geom_smooth(method = "lm", se=FALSE, color="purple", formula = y ~ x, size = 1) +
-  annotate(geom = "text", x = 10, y = 25000, 
-           label = paste("r = ", round(r1$r, 2), sep = ""), color = "red") +
-  annotate(geom = "text", x = 1000, y = 20000, 
-           label = paste("DUOX1_exp = 84.7 + 3.03*DUOXA1_exp", sep = ""),  color = "purple") + 
-  coord_cartesian(ylim=c(0, 500), xlim=c(0, 250))
+  annotate(geom = "text", x = 10, y = 775, 
+           label = paste("r = ", round(r1$r, 2), sep = ""),
+           color = "red") +
+  annotate(geom = "text", x = 300, y = 750, 
+           label = paste("CD19 = 19.15 + 0.96*PAX5", sep = ""),  
+           color = "purple") + 
+  coord_cartesian(ylim=c(0, 250), xlim=c(0, 200))
 ```
 ]
 
@@ -822,6 +776,14 @@ ggplot(tcga, aes(DUOXA1_exp, DUOX1_exp)) +
 - We assume that the `\(\epsilon_{i}\)` have a normal distribution with mean 0 and constant variance 
 `\(\sigma^{2}\)`. These are the same assumptions that we used in simple regression with one predictor.
 
+---
+
+## Multiple Regression 
+
+ More than one predictor
+ 
+`\(Y_{i}\)` = `\(\beta_{0}\)` + `\(\beta_{1}\)` `\(X_{1}\)` + `\(\beta_{2}\)` `\(X_{2}\)` + ... + `\(\beta_{k}\)` `\(X_{k}\)` + `\(\epsilon_{i}\)` for i = 1, 2, ..., n 
+
 - The subscript _i_ refers to the ith individual or unit in the population. In the notation for the predictor.s, the subscript
  following _i_ simply denotes which predictor it is.
 
@@ -835,18 +797,18 @@ ggplot(tcga, aes(DUOXA1_exp, DUOX1_exp)) +
  
 
 
-```r
- lm(DUOX1_exp ~ DUOXA1_exp + gender, data = tcga)
+``` r
+ lm(CD19 ~ PAX5 + gender, data = target_p2)
 ```
 
 ```
 
 Call:
-lm(formula = DUOX1_exp ~ DUOXA1_exp + gender, data = tcga)
+lm(formula = CD19 ~ PAX5 + gender, data = target_p2)
 
 Coefficients:
-(Intercept)   DUOXA1_exp   genderMALE  
-    149.385        3.033      -93.292  
+(Intercept)         PAX5   gendermale  
+    26.1404       0.9498      -9.6534  
 ```
 
 
@@ -858,114 +820,74 @@ Coefficients:
  
 
 
-```r
-summary( lm(DUOX1_exp ~ DUOXA1_exp  + gender, data = tcga) )
+``` r
+summary( lm(CD19 ~ PAX5 + gender, data = target_p2) )
 ```
 
-```
-
+&lt;pre class='remark-code-small'&gt;
 Call:
-lm(formula = DUOX1_exp ~ DUOXA1_exp + gender, data = tcga)
+lm(formula = CD19 ~ PAX5 + gender, data = target_p2)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--8986.8  -144.2   -47.9    49.4  5946.5 
+-308.99  -22.84  -16.54  -13.72  664.13 
 
 Coefficients:
-             Estimate Std. Error t value             Pr(&gt;|t|)    
-(Intercept) 149.38510   49.25297   3.033              0.00248 ** 
-DUOXA1_exp    3.03338    0.04053  74.837 &lt; 0.0000000000000002 ***
-genderMALE  -93.29234   55.19471  -1.690              0.09128 .  
+            Estimate Std. Error t value Pr(&amp;gt;|t|)    
+(Intercept)  26.1404     9.2137   2.837   0.0048 &amp;#42;&amp;#42; 
+PAX5          0.9498     0.0380  24.998   &amp;lt;2e-16 &amp;#42;&amp;#42;&amp;#42;
+gendermale   -9.6534    10.2544  -0.941   0.3471    
+&amp;#45;&amp;#45;&amp;#45;
+Signif. codes:  0 '&amp;#42;&amp;#42;&amp;#42;' 0.001 '&amp;#42;&amp;#42;' 0.01 '&amp;#42;' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 91.83 on 375 degrees of freedom
+Multiple R-squared:  0.6364,	Adjusted R-squared:  0.6345 
+F-statistic: 328.2 on 2 and 375 DF,  p-value: &amp;lt; 2.2e-16
+&lt;/pre&gt;
+
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 824.1 on 1040 degrees of freedom
-Multiple R-squared:  0.8435,	Adjusted R-squared:  0.8432 
-F-statistic:  2803 on 2 and 1040 DF,  p-value: &lt; 0.00000000000000022
+## Scatter Plot with linear regression lines
+
+.panelset[
+.panel[.panel-name[R Code]
+
+
+``` r
+ggplot(target_p2, aes(x = PAX5, y = CD19, shape = gender, color = gender)) + 
+  geom_point() + 
+  #geom_smooth(method = "lm", se=FALSE, formula = y ~ x, size = 1,fullrange=TRUE,aes( color=gender))  
+  geom_smooth(method = "lm" , se=FALSE)  
 ```
+]
+
+.panel[.panel-name[Plot]
+
+&lt;img src="06_slides-stats-2022_files/figure-html/unnamed-chunk-26-1.png" width="100%" /&gt;
+]
+]
+
+---
+
+## Scatter Plot with linear regression line
+
+.panelset[
+.panel[.panel-name[R Code]
 
 
-&lt;!-- --- --&gt;
+``` r
+ggplot(target_p2, aes(x = PAX5, y = CD19, shape = gender, color = gender)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se=FALSE, formula = y ~ x, size = 1, fullrange=TRUE, aes( color=gender))  +
+  coord_cartesian(ylim=c(0, 500), xlim=c(0, 200))
+```
+]
 
-&lt;!-- ## Scatter Plot with linear regression lines --&gt;
+.panel[.panel-name[Plot]
 
-&lt;!-- .panelset[ --&gt;
-&lt;!-- .panel[.panel-name[R Code] --&gt;
-
-&lt;!-- ```{r geomre2, echo = TRUE, fig.show = "hide"} --&gt;
-&lt;!-- ggplot(tcga, aes(x = DUOXA1_exp, y = DUOX1_exp, shape = gender, color = gender)) +  --&gt;
-&lt;!--   geom_point() +  --&gt;
-&lt;!--   #geom_smooth(method = "lm", se=FALSE, formula = y ~ x, size = 1,fullrange=TRUE,aes( color=gender))   --&gt;
-&lt;!--   geom_smooth(method = "lm" , se=FALSE)   --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- ] --&gt;
-
-&lt;!-- .panel[.panel-name[Plot] --&gt;
-
-&lt;!-- ```{r ref.label = "geomre2", echo = FALSE} --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- ] --&gt;
-&lt;!-- ] --&gt;
-
-
-
-&lt;!-- --- --&gt;
-
-&lt;!-- ## Scatter Plot with linear regression line --&gt;
-
-&lt;!-- .panelset[ --&gt;
-&lt;!-- .panel[.panel-name[R Code] --&gt;
-
-&lt;!-- ```{r geomregzoommult, echo = TRUE, fig.show = "hide"} --&gt;
-&lt;!-- ggplot(tcga, aes(x = DUOXA1_exp, y = DUOX1_exp, shape = gender, color = gender)) +  --&gt;
-&lt;!--   geom_point() +  --&gt;
-&lt;!--   geom_smooth(method = "lm", se=FALSE, formula = y ~ x, size = 1, fullrange=TRUE, aes( color=gender))  + --&gt;
-&lt;!--   coord_cartesian(ylim=c(0, 500), xlim=c(0, 200)) --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- ] --&gt;
-
-&lt;!-- .panel[.panel-name[Plot] --&gt;
-
-&lt;!-- ```{r ref.label = "geomregzoommult", echo = FALSE} --&gt;
-&lt;!-- ``` --&gt;
-&lt;!-- ] --&gt;
-&lt;!-- ] --&gt;
-
-
-
-
-&lt;!-- --- --&gt;
-
-
-
-&lt;!-- ##  Testing slide 1 --&gt;
-
-
-&lt;!-- ```{r comment=NA} --&gt;
-
-&lt;!-- lm(DUOX1_exp ~ DUOXA1_exp   , data = tcga, subset =  tcga$gender=="MALE")   --&gt;
-
-&lt;!-- ``` --&gt;
-
-
-
-&lt;!-- --- --&gt;
-
-
-
-&lt;!-- ##  Testing slide 2 --&gt;
-
-
-&lt;!-- ```{r comment=NA} --&gt;
-
-&lt;!--  lm(DUOX1_exp ~ DUOXA1_exp  , data = tcga, subset =  tcga$gender=="FEMALE")   --&gt;
-
-&lt;!-- ``` --&gt;
-
-
-
-
-
+&lt;img src="06_slides-stats-2022_files/figure-html/unnamed-chunk-27-1.png" width="100%" /&gt;
+]
+]
 
 ---
  
@@ -1024,6 +946,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

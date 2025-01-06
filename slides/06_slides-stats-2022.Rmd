@@ -1,8 +1,9 @@
 ---
-title: "Lea.orange[R]ning about Statistics - YEAH!!!"
+title: "Lea.orange[R]ning about Statistics"
 subtitle: "Correlation, Scatterplots and Regression! "
 author: 
   - Zachary Thompson 
+  - Alex Soupir
 institute: "Moffitt Cancer Center"
 date: '`r strftime(Sys.time(), "%B %d, %Y")`'
 output:
@@ -44,13 +45,12 @@ options(width = 70)
   library(ggplot2)
   library(janitor)
   library(gridExtra)
-  library(broom)
-   
+  library(htmltools)
 
    
-# MERGE and making smoking variable 
-clinical <- read.csv(file = "F:\\myGitRepo\\Introduction-to-R\\data\\tcga-clinical.csv", header = TRUE)
-geneexp <- read.csv(file = "F:\\myGitRepo\\Introduction-to-R\\data\\tcga-gene-exp.csv", header = TRUE)
+# MERGE
+clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"))
+geneexp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
 
  
 # intersect(names(clinical), names(geneexp))
@@ -58,26 +58,20 @@ geneexp <- read.csv(file = "F:\\myGitRepo\\Introduction-to-R\\data\\tcga-gene-ex
 # dim(clinical)
 # dim(geneexp)
  
-tcga <- left_join(clinical, geneexp, by = "bcr_patient_barcode")
-#dim(tcga)
+target_p2 <- left_join(clinical, geneexp, by = "case_submitter_id") %>%
+  mutate(race = ifelse(grepl("pacific", race),
+                       "pacific islander",
+                       race))
 
-
-
-tcga <- tcga %>% mutate(
-  #smoking = tobacco_smoking_history,
-  smoking = case_when(
-    tobacco_smoking_history %in% c(
-      "Current reformed smoker for < or = 15 years",
-      "Current reformed smoker for > 15 years",
-      "Current Reformed Smoker, Duration Not Specified"
-    ) ~ "Former",
-    tobacco_smoking_history %in% c("Current smoker") ~ "Current",
-    tobacco_smoking_history %in% c("Lifelong Non-smoker") ~ "Never",
-    is.na(tobacco_smoking_history) ~ NA_character_
-  )
-)
-
-#table(tcga$smoking, useNA = "always")
+prep_summary = function(output){
+  # Escape special characters
+  escaped_output <- gsub("&", "&amp;", output) # Escape &
+  escaped_output <- gsub("<", "&lt;", escaped_output) # Escape <
+  escaped_output <- gsub(">", "&gt;", escaped_output) # Escape >
+  escaped_output <- gsub("\\*", "&#42;", escaped_output) # Escape *
+  escaped_output <- gsub("---", "&#45;&#45;&#45;", escaped_output) # Escape ---
+  return(escaped_output)
+}
 
 
 ```
@@ -165,7 +159,7 @@ or to force either to be shown
 
 - Univariate regresssion
 
-- MultivarIABLE reression
+- Multivariable regression
 
  
  
@@ -179,8 +173,8 @@ or to force either to be shown
 .panel[.panel-name[R Code]
 
 ```{r geom0, echo = TRUE, fig.show = "hide"}
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
+ggplot((target_p2),
+       aes(MYC, TP53)) + 
   geom_point() 
 
 ```
@@ -204,8 +198,8 @@ ggplot(tcga) +
 .panel[.panel-name[R Code]
 
 ```{r geom0fill, echo = TRUE, fig.show = "hide"}
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
+ggplot((target_p2),
+       aes(MYC, TP53)) + 
   geom_point(aes(colour = gender)) 
 
 ```
@@ -230,9 +224,9 @@ ggplot(tcga) +
 .panel[.panel-name[R Code]
 
 ```{r geomsmoking, echo = TRUE, fig.show = "hide"}
-ggplot(tcga %>% filter(!is.na(smoking))) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
-  geom_point(aes(shape = smoking, colour = smoking)) 
+ggplot((target_p2),
+       aes(MYC, TP53)) + 
+  geom_point(aes(shape = race, colour = gender)) 
 
 ```
 ]
@@ -243,42 +237,6 @@ ggplot(tcga %>% filter(!is.na(smoking))) +
 ```
 ]
 ]
- 
- 
- 
----
-
-## Scatter plots 
-
-  
-
-.panelset[
-.panel[.panel-name[R Code]
-
-```{r geom0size, echo = TRUE, fig.show = "hide"}
-
-
-
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
-  geom_point(aes(size = stage,colour = weight)) 
-
-```
-]
-
-.panel[.panel-name[Plot]
-
-```{r ref.label = "geom0size", echo = FALSE}
-```
-]
-]
- 
-
-
-
-
- 
-
 
 
 ---
@@ -305,7 +263,7 @@ $r_{xy}$ = $\frac{ \sum_{i = 1}^{n}  (x_{i}-  \overline{x} )(y_{i}- \overline{y}
 
 *   n is the sample size
 *   $x_{i}$ and $y_{i}$  are the individual sample points indexed with i
-*   $\overline{x} = \frac{1}{n}\sum_{i = 1}^{n} x_{i}$ is the smaple mean of x (similarly y)
+*   $\overline{x} = \frac{1}{n}\sum_{i = 1}^{n} x_{i}$ is the sample mean of x (similarly y)
 
 
 
@@ -317,16 +275,16 @@ $r_{xy}$ = $\frac{ \sum_{i = 1}^{n}  (x_{i}-  \overline{x} )(y_{i}- \overline{y}
 ```{r  comment=NA}
 
  
-r1 <- tcga %>% correlation::cor_test("DUOXA1_exp", 
-                                          "DUOX1_exp", 
+r1 <- target_p2 %>% correlation::cor_test("CD3E", 
+                                          "IL7R", 
                                           method = c("pearson") ) 
  
-r2 <- tcga %>% correlation::cor_test("BUB1_exp",
-                                          "C10orf32_exp",
+r2 <- target_p2 %>% correlation::cor_test("CD3E",
+                                          "CD19",
                                           method = c("pearson") ) 
  
-r3 <- tcga %>% correlation::cor_test("BRAF_exp", 
-                                          "DTL_exp", 
+r3 <- target_p2 %>% correlation::cor_test("MYC", 
+                                          "KRAS", 
                                           method = c("pearson") )
  
 ```
@@ -366,10 +324,10 @@ r3 <- tcga %>% correlation::cor_test("BRAF_exp",
 .panel[.panel-name[R Code]
 
 ```{r geom, echo = TRUE, fig.show = "hide"}
-ggplot(tcga) + 
-  aes(DUOXA1_exp, DUOX1_exp) + 
+ggplot(target_p2) + 
+  aes(CD3E, IL7R) + 
   geom_point() + 
-  annotate(geom = "text", x = 10, y = 25000, 
+  annotate(geom = "text", x = 10, y = 800, 
            label = paste("r = ", round(r1$r, 2), sep = ""),
            color = "red")
 
@@ -396,10 +354,10 @@ ggplot(tcga) +
 
 ```{r geom2, echo = TRUE, fig.show = "hide"}
 
-ggplot(tcga) + 
-  aes(BUB1_exp, C10orf32_exp) + 
+ggplot(target_p2) + 
+  aes(CD3E, CD19) + 
   geom_point() + 
-  annotate(geom = "text", x = 1000, y = 4000, 
+  annotate(geom = "text", x = 500, y = 1000, 
            label = paste("r = ", round(r2$r, 2), sep = ""),
            color = "red")
  
@@ -424,10 +382,10 @@ ggplot(tcga) +
 .panel[.panel-name[R Code]
 
 ```{r geom3, echo = TRUE, fig.show = "hide"}
-ggplot(tcga) + 
-  aes(BRAF_exp, DTL_exp) + 
+ggplot(target_p2) + 
+  aes(MYC, KRAS) + 
   geom_point() + 
-  annotate(geom = "text", x = 0, y = 1100, 
+  annotate(geom = "text", x = 0, y = 325, 
            label = paste("r = ", round(r3$r, 2), sep = ""),  
            color = "red")
  
@@ -446,6 +404,11 @@ ggplot(tcga) +
 
  
 
+
+```{r  comment=NA}
+
+
+```
  
 
 
@@ -457,8 +420,8 @@ ggplot(tcga) +
  
 
 ```{r comment=NA}
-tcga %>% 
-  select(DUOXA1_exp, DUOX1_exp, BUB1_exp, BRAF_exp, DTL_exp ) %>%
+target_p2 %>% 
+  select(CD3E, IL7R, CD19, MYC, KRAS) %>%
   cor() %>% round(.,2)
 
 ```
@@ -477,18 +440,18 @@ The Spearman correlation evaluates the monotonic relationship between two contin
 
 
 
-## Example of monotonic relationship
+## Spearman Correlation example of monotonic relationship
 
 
  
 ```{r echo=FALSE, comment=NA}
  
 
-x2 <- x <- seq(10,20,.25)
-y2 <- (x-15)^3 + 100
-pdata <-  data.frame(x=x2,y=y2) 
-ggplot(pdata, aes(x,y)) + geom_point() 
+x <- seq(10,20,.25)
+y <- (x-15)^3 + 100
+pdata <-  data.frame(x,y)
  
+ggplot(pdata, aes(x,y)) + geom_point()  
 
 ```
 
@@ -504,16 +467,16 @@ ggplot(pdata, aes(x,y)) + geom_point()
 ```{r  comment=NA}
 
  
-r1 <- tcga %>% correlation::cor_test("DUOXA1_exp", 
-                                          "DUOX1_exp", 
+r1 <- target_p2 %>% correlation::cor_test("CD3E", 
+                                          "IL7R", 
                                           method = c("spearman") ) 
  
-r2 <- tcga %>% correlation::cor_test("BUB1_exp",
-                                          "C10orf32_exp",
+r2 <- target_p2 %>% correlation::cor_test("CD3E",
+                                          "CD19",
                                           method = c("spearman") ) 
  
-r3 <- tcga %>% correlation::cor_test("BRAF_exp", 
-                                          "DTL_exp", 
+r3 <- target_p2 %>% correlation::cor_test("MYC", 
+                                          "KRAS", 
                                           method = c("spearman") )
  
 ```
@@ -529,26 +492,16 @@ r3 <- tcga %>% correlation::cor_test("BRAF_exp",
 
 ```
 
----
+
  
-## Pearson Correlation 
- 
-
-```{r comment=NA}
- bind_rows(r1,r2,r3 ) 
-
-```
-
-
-
 ---
 
 ## Correllation Matrix 
  
 
 ```{r comment=NA}
-tcga %>% 
-  select(DUOXA1_exp, DUOX1_exp, BUB1_exp, BRAF_exp, DTL_exp ) %>%
+target_p2 %>% 
+  select(CD3E, IL7R, CD19, MYC, KRAS ) %>%
   cor( method = c("spearman")) %>% round(.,2)
 
 ```
@@ -561,9 +514,9 @@ tcga %>%
 # Regression 
 
 
-- Univariate regresssion
+- Univariate regression
 
-- MultivarIABLE reression
+- Multivariable regression
 
 
 ---
@@ -603,7 +556,7 @@ $Y_{i}$ = $\beta_{0}$ + $\beta_{1}$ $X_{1}$ + $\epsilon_{i}$ where $\epsilon_{i}
 
 ```{r comment=NA}
 
- lm(DUOX1_exp ~ DUOXA1_exp, data = tcga)
+ lm(CD19 ~ PAX5, data = target_p2)
 
 ```
 
@@ -613,10 +566,18 @@ $Y_{i}$ = $\beta_{0}$ + $\beta_{1}$ $X_{1}$ + $\epsilon_{i}$ where $\epsilon_{i}
 ##  Simple linear regression 
  
 
-```{r comment=NA}
+```{r comment=NA, eval = FALSE}
+summary( lmfit <-  lm(CD19 ~ PAX5, data = target_p2) )
+```
 
-summary( lmfit <-  lm(DUOX1_exp ~ DUOXA1_exp, data = tcga) )
+```{r comment=NA, results = "asis", echo = FALSE}
+# Capture the output of the summary
+lmfit = lm(CD19 ~ PAX5, data = target_p2)
+output <- capture.output(summary(lmfit))
+escaped_output = prep_summary(output)
 
+# Wrap in <pre> tags with the remark-code-small class
+cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(escaped_output, collapse = "\n")))
 ```
  
 
@@ -654,14 +615,16 @@ summary( lmfit <-  lm(DUOX1_exp ~ DUOXA1_exp, data = tcga) )
 .panel[.panel-name[R Code]
 
 ```{r geomreg, echo = TRUE, fig.show = "hide"}
-ggplot(tcga, aes(DUOXA1_exp, DUOX1_exp) ) + 
+r1 <- target_p2 %>% correlation::cor_test("PAX5", 
+                                          "CD19") 
+ggplot(target_p2, aes(PAX5, CD19) ) + 
   geom_point() +  
   geom_smooth(method = "lm", se=FALSE, color="purple", formula = y ~ x, size = 1) +
-  annotate(geom = "text", x = 10, y = 25000, 
+  annotate(geom = "text", x = 10, y = 775, 
            label = paste("r = ", round(r1$r, 2), sep = ""),
            color = "red") +
-  annotate(geom = "text", x = 1000, y = 20000, 
-           label = paste("DUOX1_exp = 84.7 + 3.03*DUOXA1_exp", sep = ""),  
+  annotate(geom = "text", x = 300, y = 750, 
+           label = paste("CD19 = 19.15 + 0.96*PAX5", sep = ""),  
            color = "purple")
 ```
 ]
@@ -685,14 +648,16 @@ ggplot(tcga, aes(DUOXA1_exp, DUOX1_exp) ) +
 .panel[.panel-name[R Code]
 
 ```{r geomregzoom, echo = TRUE, fig.show = "hide"}
-ggplot(tcga, aes(DUOXA1_exp, DUOX1_exp)) + 
-  geom_point() + 
+ggplot(target_p2, aes(PAX5, CD19) ) + 
+  geom_point() +  
   geom_smooth(method = "lm", se=FALSE, color="purple", formula = y ~ x, size = 1) +
-  annotate(geom = "text", x = 10, y = 25000, 
-           label = paste("r = ", round(r1$r, 2), sep = ""), color = "red") +
-  annotate(geom = "text", x = 1000, y = 20000, 
-           label = paste("DUOX1_exp = 84.7 + 3.03*DUOXA1_exp", sep = ""),  color = "purple") + 
-  coord_cartesian(ylim=c(0, 500), xlim=c(0, 250))
+  annotate(geom = "text", x = 10, y = 775, 
+           label = paste("r = ", round(r1$r, 2), sep = ""),
+           color = "red") +
+  annotate(geom = "text", x = 300, y = 750, 
+           label = paste("CD19 = 19.15 + 0.96*PAX5", sep = ""),  
+           color = "purple") + 
+  coord_cartesian(ylim=c(0, 250), xlim=c(0, 200))
 ```
 ]
 
@@ -740,6 +705,14 @@ $\beta$ coefficients).
 - We assume that the $\epsilon_{i}$ have a normal distribution with mean 0 and constant variance 
 $\sigma^{2}$. These are the same assumptions that we used in simple regression with one predictor.
 
+---
+
+## Multiple Regression 
+
+ More than one predictor
+ 
+$Y_{i}$ = $\beta_{0}$ + $\beta_{1}$ $X_{1}$ + $\beta_{2}$ $X_{2}$ + ... + $\beta_{k}$ $X_{k}$ + $\epsilon_{i}$ for i = 1, 2, ..., n 
+
 - The subscript _i_ refers to the ith individual or unit in the population. In the notation for the predictor.s, the subscript
  following _i_ simply denotes which predictor it is.
 
@@ -754,7 +727,7 @@ $\beta_{0}$, $\beta_{1}$, $\beta_{2}$, $\beta_{k}$. This means that each paramet
 
 ```{r comment=NA}
 
- lm(DUOX1_exp ~ DUOXA1_exp + gender, data = tcga)
+ lm(CD19 ~ PAX5 + gender, data = target_p2)
 
 ```
 
@@ -766,94 +739,65 @@ $\beta_{0}$, $\beta_{1}$, $\beta_{2}$, $\beta_{k}$. This means that each paramet
 ##  Multiple regression 
  
 
-```{r comment=NA}
+```{r comment=NA, eval = FALSE}
 
-summary( lm(DUOX1_exp ~ DUOXA1_exp  + gender, data = tcga) )
+summary( lm(CD19 ~ PAX5 + gender, data = target_p2) )
 
 ```
 
+```{r comment=NA, results = "asis", echo = FALSE}
+# Capture the output of the summary
+lmfit_mr = lm(CD19 ~ PAX5 + gender, data = target_p2)
+output_mr <- capture.output(summary(lmfit_mr))
+escaped_output_mr = prep_summary(output_mr)
 
-<!-- --- -->
+# Wrap in <pre> tags with the remark-code-small class
+cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(escaped_output_mr, collapse = "\n")))
+```
 
-<!-- ## Scatter Plot with linear regression lines -->
+---
 
-<!-- .panelset[ -->
-<!-- .panel[.panel-name[R Code] -->
+## Scatter Plot with linear regression lines
 
-<!-- ```{r geomre2, echo = TRUE, fig.show = "hide"} -->
-<!-- ggplot(tcga, aes(x = DUOXA1_exp, y = DUOX1_exp, shape = gender, color = gender)) +  -->
-<!--   geom_point() +  -->
-<!--   #geom_smooth(method = "lm", se=FALSE, formula = y ~ x, size = 1,fullrange=TRUE,aes( color=gender))   -->
-<!--   geom_smooth(method = "lm" , se=FALSE)   -->
-<!-- ``` -->
-<!-- ] -->
+.panelset[
+.panel[.panel-name[R Code]
 
-<!-- .panel[.panel-name[Plot] -->
+```{r geomre2, echo = TRUE, fig.show = "hide"}
+ggplot(target_p2, aes(x = PAX5, y = CD19, shape = gender, color = gender)) + 
+  geom_point() + 
+  #geom_smooth(method = "lm", se=FALSE, formula = y ~ x, size = 1,fullrange=TRUE,aes( color=gender))  
+  geom_smooth(method = "lm" , se=FALSE)  
+```
+]
 
-<!-- ```{r ref.label = "geomre2", echo = FALSE} -->
-<!-- ``` -->
-<!-- ] -->
-<!-- ] -->
+.panel[.panel-name[Plot]
 
+```{r ref.label = "geomre2", echo = FALSE}
+```
+]
+]
 
+---
 
-<!-- --- -->
+## Scatter Plot with linear regression line
 
-<!-- ## Scatter Plot with linear regression line -->
+.panelset[
+.panel[.panel-name[R Code]
 
-<!-- .panelset[ -->
-<!-- .panel[.panel-name[R Code] -->
+```{r geomregzoommult, echo = TRUE, fig.show = "hide"}
+ggplot(target_p2, aes(x = PAX5, y = CD19, shape = gender, color = gender)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se=FALSE, formula = y ~ x, size = 1, fullrange=TRUE, aes( color=gender))  +
+  coord_cartesian(ylim=c(0, 500), xlim=c(0, 200))
+```
+]
 
-<!-- ```{r geomregzoommult, echo = TRUE, fig.show = "hide"} -->
-<!-- ggplot(tcga, aes(x = DUOXA1_exp, y = DUOX1_exp, shape = gender, color = gender)) +  -->
-<!--   geom_point() +  -->
-<!--   geom_smooth(method = "lm", se=FALSE, formula = y ~ x, size = 1, fullrange=TRUE, aes( color=gender))  + -->
-<!--   coord_cartesian(ylim=c(0, 500), xlim=c(0, 200)) -->
-<!-- ``` -->
-<!-- ] -->
+.panel[.panel-name[Plot]
 
-<!-- .panel[.panel-name[Plot] -->
-
-<!-- ```{r ref.label = "geomregzoommult", echo = FALSE} -->
-<!-- ``` -->
-<!-- ] -->
-<!-- ] -->
-
-
-
-
-<!-- --- -->
-
-
-
-<!-- ##  Testing slide 1 -->
-
-
-<!-- ```{r comment=NA} -->
-
-<!-- lm(DUOX1_exp ~ DUOXA1_exp   , data = tcga, subset =  tcga$gender=="MALE")   -->
-
-<!-- ``` -->
-
-
-
-<!-- --- -->
-
-
-
-<!-- ##  Testing slide 2 -->
-
-
-<!-- ```{r comment=NA} -->
-
-<!--  lm(DUOX1_exp ~ DUOXA1_exp  , data = tcga, subset =  tcga$gender=="FEMALE")   -->
-
-<!-- ``` -->
-
-
-
-
-
+```{r ref.label = "geomregzoommult", echo = FALSE}
+```
+]
+]
 
 ---
  

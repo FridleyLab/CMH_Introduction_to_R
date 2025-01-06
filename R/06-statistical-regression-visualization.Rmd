@@ -1,5 +1,5 @@
 ---
-title: "Statistical Testing of Means : V"
+title: "Regression modeling and Visualization - VI"
 output: html_document
 ---
 
@@ -26,21 +26,28 @@ gene_exp <- read_csv(here::here("data/TARGET_P2_tpm.csv"))
 
 ```
 
-## Perform a T-test on a gene and gender
+## Find the correlation of two genes
 
 ```{r}
 
 
 ```
 
-## Perform a Wilcoxon Rank Sum test on a gene and gender
+## Create a scatter plot of the above genes
 
 ```{r}
 
 
 ```
 
-## Perform ANOVA on a gene x race
+## Create a linear model of two different genes
+
+```{r}
+
+
+```
+
+## Create a multiple regression model of two different genes and clinical variable
 
 ```{r}
 
