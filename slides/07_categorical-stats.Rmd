@@ -66,25 +66,25 @@ target_p2 <- left_join(clinical, geneexp, by = "case_submitter_id") %>%
 #dim(target_p2)
 
 #sim survival times
-survs = target_p2$days_to_death %>% as.numeric()
-survs = survs[!is.na(survs)]
-
-# Fit distributions to the observed survival data
-set.seed(333)
-fit_weibull <- fitdist(survs, "weibull")
-fit_lognormal <- fitdist(survs, "lnorm")
-
-# Compare fits
-#plot(fit_weibull) #better fit i think
-#plot(fit_lognormal)
-target_p2 = target_p2 %>% 
+# survs = target_p2$days_to_death %>% as.numeric()
+# survs = survs[!is.na(survs)]
+# 
+# # Fit distributions to the observed survival data
+# set.seed(333)
+# fit_weibull <- fitdist(survs, "weibull")
+# fit_lognormal <- fitdist(survs, "lnorm")
+# 
+# # Compare fits
+# #plot(fit_weibull) #better fit i think
+# #plot(fit_lognormal)
+target_p2 = target_p2 %>%
     mutate(event = case_when(vital_status == "Alive" ~ 0,
-                             TRUE ~ 1)) %>%
-    rowwise() %>%
-    mutate(days_to_death = case_when(vital_status == "Dead" ~ as.numeric(days_to_death),
-                                     TRUE ~ rweibull(n = 1, shape = fit_weibull$estimate["shape"], scale = fit_weibull$estimate["scale"]) %>%
-                                       round(., 0))) %>% 
-  ungroup()
+                             TRUE ~ 1))
+#     rowwise() %>%
+#     mutate(days_to_death = case_when(vital_status == "Dead" ~ as.numeric(days_to_death),
+#                                      TRUE ~ rweibull(n = 1, shape = fit_weibull$estimate["shape"], scale = fit_weibull$estimate["scale"]) %>%
+#                                        round(., 0))) %>% 
+#   ungroup()
 
 prep_summary = function(output){
   # Escape special characters
@@ -417,7 +417,24 @@ The Kaplan-Meier estimator calculates the survival probability at each time poin
 
 This is used over traditional modeling (like linear regression) because it takes into account censored data (i.e., when a patient hasn't died but are no longer in contact/lost to follow-up).
 
-***Time to last follow-up is simulated for those who had not died. Do not interpret the results as if they are real.***
+---
+
+## Survival with Kaplan-Meier
+
+Merge `target_p2` with the follow-up data for survival analysis
+
+```{r}
+followup = read_delim(here::here("data/TARGET_P2_follow_up.tsv")) %>%
+  select(case_submitter_id, days_to_follow_up) %>%
+  mutate(days_to_follow_up = as.numeric(days_to_follow_up)) %>%
+  arrange(desc(days_to_follow_up)) %>%
+  group_by(case_submitter_id) %>%
+  slice(1)
+target_p2 = target_p2 %>%
+  full_join(followup)
+  
+```
+
 
 ---
 
@@ -430,7 +447,7 @@ Data preparation. Our `event` variable (typically death but could be any event l
 
 ```{r surv_prep, echo = TRUE, fig.show = "hide", eval = FALSE}
 target_p2 %>% 
-  select(days_to_death, vital_status) %>%
+  select(days_to_follow_up, vital_status) %>%
   mutate(event = case_when(vital_status == "Alive" ~ 0,
                            TRUE ~ 1)) %>%
   head() %>% data.frame()
@@ -439,7 +456,7 @@ target_p2 %>%
 ```{r comment=NA, results = "asis", echo = FALSE}
 # Capture the output of the summary
 dat = target_p2 %>% 
-  select(days_to_death, vital_status) %>%
+  select(days_to_follow_up, vital_status) %>%
   mutate(event = case_when(vital_status == "Alive" ~ 0,
                            TRUE ~ 1)) %>%
   head() %>% data.frame() %>% capture.output()
@@ -455,12 +472,12 @@ cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(dat, collapse = "\n
 Takes form of `Surv(time, event)`
 
 ```{r surv_model, echo = TRUE, fig.show = "hide", eval = FALSE}
-km_fit <- survfit(Surv(days_to_death, event) ~ 1, data=target_p2)
+km_fit <- survfit(Surv(days_to_follow_up, event) ~ 1, data=target_p2)
 summary(km_fit, times = seq(0, 4000, by = 500))
 ```
 
 ```{r comment=NA, results = "asis", echo = FALSE}
-km_fit <- survfit(Surv(days_to_death, event) ~ 1, data=target_p2)
+km_fit <- survfit(Surv(days_to_follow_up, event) ~ 1, data=target_p2)
 dat = summary(km_fit, times = seq(0, 4000, by = 500)) %>% capture.output()
 dat_prepped = prep_summary(dat)
 
@@ -487,7 +504,7 @@ plot(km_fit, xlab = "Days", main = "Kaplan-Meier Plot")
 .panel[.panel-name[R Code]
 
 ```{r surv_gender_plot, echo = TRUE, fig.show = "hide"}
-km_fit_gender <- survfit(Surv(days_to_death, event) ~ gender, data=target_p2)
+km_fit_gender <- survfit(Surv(days_to_follow_up, event) ~ gender, data=target_p2)
 plot(km_fit_gender, lty=2:3)
 legend(100, .3, c("Female", "Male"), lty = 2:3) 
 ```
@@ -507,7 +524,7 @@ legend(100, .3, c("Female", "Male"), lty = 2:3)
 To extract model statistics we can fit using `coxph` instead of `survfit`
 
 ```{r, echo = TRUE, fig.show = "hide", eval = FALSE}
-km_fit_gender_cph <- coxph(Surv(days_to_death, event) ~ gender, data=target_p2)
+km_fit_gender_cph <- coxph(Surv(days_to_follow_up, event) ~ gender, data=target_p2)
 summary(km_fit_gender_cph)
 ```
 
@@ -518,7 +535,7 @@ summary(km_fit_gender_cph)
 To extract model statistics we can fit using `coxph` instead of `survfit`
 
 ```{r comment=NA, results = "asis", echo = FALSE}
-km_fit_gender_cph <- coxph(Surv(days_to_death, event) ~ gender, data=target_p2)
+km_fit_gender_cph <- coxph(Surv(days_to_follow_up, event) ~ gender, data=target_p2)
 dat = summary(km_fit_gender_cph) %>% capture.output()
 dat_prepped = prep_summary(dat)
 
@@ -526,7 +543,6 @@ dat_prepped = prep_summary(dat)
 cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(dat_prepped, collapse = "\n")))
 ```
 
-The p-value fo r `gendermale` is greater than larger than our typical 0.05 indicating there is not a significant difference between gender survival times.
 
 ---
 

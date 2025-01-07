@@ -403,7 +403,24 @@ The Kaplan-Meier estimator calculates the survival probability at each time poin
 
 This is used over traditional modeling (like linear regression) because it takes into account censored data (i.e., when a patient hasn't died but are no longer in contact/lost to follow-up).
 
-***Time to last follow-up is simulated for those who had not died. Do not interpret the results as if they are real.***
+---
+
+## Survival with Kaplan-Meier
+
+Merge `target_p2` with the follow-up data for survival analysis
+
+
+``` r
+followup = read_delim(here::here("data/TARGET_P2_follow_up.tsv")) %&gt;%
+  select(case_submitter_id, days_to_follow_up) %&gt;%
+  mutate(days_to_follow_up = as.numeric(days_to_follow_up)) %&gt;%
+  arrange(desc(days_to_follow_up)) %&gt;%
+  group_by(case_submitter_id) %&gt;%
+  slice(1)
+target_p2 = target_p2 %&gt;%
+  full_join(followup)
+```
+
 
 ---
 
@@ -417,19 +434,19 @@ Data preparation. Our `event` variable (typically death but could be any event l
 
 ``` r
 target_p2 %&gt;% 
-  select(days_to_death, vital_status) %&gt;%
+  select(days_to_follow_up, vital_status) %&gt;%
   mutate(event = case_when(vital_status == "Alive" ~ 0,
                            TRUE ~ 1)) %&gt;%
   head() %&gt;% data.frame()
 ```
 
-&lt;pre class='remark-code-small'&gt;  days_to_death vital_status event
-1          1015        Alive     0
-2          2132        Alive     0
-3           123        Alive     0
-4           836        Alive     0
-5           397         Dead     1
-6           592        Alive     0&lt;/pre&gt;
+&lt;pre class='remark-code-small'&gt;  days_to_follow_up vital_status event
+1               208        Alive     0
+2              2006        Alive     0
+3              3529        Alive     0
+4              3010        Alive     0
+5               397         Dead     1
+6              3087        Alive     0&lt;/pre&gt;
 
 ]
 
@@ -439,20 +456,23 @@ Takes form of `Surv(time, event)`
 
 
 ``` r
-km_fit &lt;- survfit(Surv(days_to_death, event) ~ 1, data=target_p2)
+km_fit &lt;- survfit(Surv(days_to_follow_up, event) ~ 1, data=target_p2)
 summary(km_fit, times = seq(0, 4000, by = 500))
 ```
 
-&lt;pre class='remark-code-small'&gt;Call: survfit(formula = Surv(days_to_death, event) ~ 1, data = target_p2)
+&lt;pre class='remark-code-small'&gt;Call: survfit(formula = Surv(days_to_follow_up, event) ~ 1, data = target_p2)
 
+3 observations deleted due to missingness 
  time n.risk n.event survival std.err lower 95&amp;#37 CI upper 95&amp;#37 CI
-    0    378       0    1.000  0.0000        1.000        1.000
-  500    294      20    0.940  0.0130        0.915        0.966
- 1000    175      25    0.841  0.0222        0.799        0.886
- 1500     91      14    0.753  0.0302        0.696        0.814
- 2000     48       9    0.659  0.0397        0.585        0.741
- 2500     16       5    0.541  0.0603        0.435        0.673
- 3000      5       3    0.384  0.0930        0.238        0.617&lt;/pre&gt;
+    0    375       0    1.000  0.0000        1.000        1.000
+  500    349      19    0.948  0.0115        0.926        0.971
+ 1000    319      25    0.880  0.0170        0.847        0.914
+ 1500    292      14    0.841  0.0192        0.804        0.879
+ 2000    242       9    0.814  0.0206        0.775        0.855
+ 2500    114       4    0.796  0.0221        0.754        0.840
+ 3000     55       3    0.767  0.0273        0.715        0.822
+ 3500     26       2    0.733  0.0348        0.668        0.805
+ 4000      9       0    0.733  0.0348        0.668        0.805&lt;/pre&gt;
 
 ]
 
@@ -477,7 +497,7 @@ plot(km_fit, xlab = "Days", main = "Kaplan-Meier Plot")
 
 
 ``` r
-km_fit_gender &lt;- survfit(Surv(days_to_death, event) ~ gender, data=target_p2)
+km_fit_gender &lt;- survfit(Surv(days_to_follow_up, event) ~ gender, data=target_p2)
 plot(km_fit_gender, lty=2:3)
 legend(100, .3, c("Female", "Male"), lty = 2:3) 
 ```
@@ -485,7 +505,7 @@ legend(100, .3, c("Female", "Male"), lty = 2:3)
 
 .panel[.panel-name[Plot]
 
-&lt;img src="07_categorical-stats_files/figure-html/unnamed-chunk-11-1.png" width="100%" /&gt;
+&lt;img src="07_categorical-stats_files/figure-html/unnamed-chunk-12-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -497,7 +517,7 @@ To extract model statistics we can fit using `coxph` instead of `survfit`
 
 
 ``` r
-km_fit_gender_cph &lt;- coxph(Surv(days_to_death, event) ~ gender, data=target_p2)
+km_fit_gender_cph &lt;- coxph(Surv(days_to_follow_up, event) ~ gender, data=target_p2)
 summary(km_fit_gender_cph)
 ```
 
@@ -508,25 +528,23 @@ summary(km_fit_gender_cph)
 To extract model statistics we can fit using `coxph` instead of `survfit`
 
 &lt;pre class='remark-code-small'&gt;Call:
-coxph(formula = Surv(days_to_death, event) ~ gender, data = target_p2)
+coxph(formula = Surv(days_to_follow_up, event) ~ gender, data = target_p2)
 
-  n= 378, number of events= 78 
+  n= 375, number of events= 76 
+   (3 observations deleted due to missingness)
 
-              coef exp(coef) se(coef)      z Pr(&amp;gt;|z|)  
-gendermale -0.4255    0.6534   0.2363 -1.801   0.0717 .
-&amp;#45;&amp;#45;&amp;#45;
-Signif. codes:  0 '&amp;#42;&amp;#42;&amp;#42;' 0.001 '&amp;#42;&amp;#42;' 0.01 '&amp;#42;' 0.05 '.' 0.1 ' ' 1
+              coef exp(coef) se(coef)      z Pr(&amp;gt;|z|)
+gendermale -0.1654    0.8475   0.2385 -0.694    0.488
 
            exp(coef) exp(-coef) lower .95 upper .95
-gendermale    0.6534       1.53    0.4112     1.038
+gendermale    0.8475       1.18     0.531     1.353
 
-Concordance= 0.544  (se = 0.032 )
-Likelihood ratio test= 3.11  on 1 df,   p=0.08
-Wald test            = 3.24  on 1 df,   p=0.07
-Score (logrank) test = 3.29  on 1 df,   p=0.07
+Concordance= 0.53  (se = 0.029 )
+Likelihood ratio test= 0.47  on 1 df,   p=0.5
+Wald test            = 0.48  on 1 df,   p=0.5
+Score (logrank) test = 0.48  on 1 df,   p=0.5
 &lt;/pre&gt;
 
-The p-value fo r `gendermale` is greater than larger than our typical 0.05 indicating there is not a significant difference between gender survival times.
 
 ---
 

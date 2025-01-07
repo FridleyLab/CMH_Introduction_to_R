@@ -100,3 +100,10 @@ fwrite(tpm_dat, "data/TARGET_P2_tpm.csv")
 #remove clinical columns with all missing value
 clinical = clinical[,!apply(clinical, 2, function(x) all(x == "'--")), with = FALSE]
 fwrite(clinical, "data/TARGET_P2_clinical.tsv")
+
+#followup
+followup = fread("../Target-ALL-P2/clinical.cart.2025-01-03/follow_up.tsv")
+followup = followup[,!apply(followup, 2, function(x) all(x == "'--")), with = FALSE]
+
+#fileID
+#d4ddbad4-3ec4-48d2-9607-db615731ff6d
