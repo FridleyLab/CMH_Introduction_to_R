@@ -14,23 +14,22 @@ knitr::opts_chunk$set(
 Introduction to R
 ================
 
-### Moffitt Cancer Center 
+### Children's Mercy Hospital
 
 -----
 
-:calendar: Wednesday June 9 - July 14, 2021
+:calendar: February 28, 2025
 
-:alarm_clock: 3-4 pm
+:alarm_clock: 8 am - 5 pm
 
-:office: via Zoom (link coming soon)
-
-:computer: [Moffitt](https://moffitt.org/)
+:computer: [Workshop Github](https://github.com/FridleyLab/CMH_Introduction_to_R)
 
 -----
 
 ## Setup
 
-The course will be hosted through ....
+The workshop will be hosted in person at Children's Mercy Hospital in Kansas City. 
+Please come with R and RStudio already installed on your computer. 
 
 <!-- 
 * When you're done, put a green post-it on your computer. 
@@ -56,11 +55,11 @@ Find our live coded notes in [`notes/`](notes/) as we commit them.
 
 ## Questions?
 
-Feel free to ask questions in the [GitHub Issues](https://github.com).
+Feel free to ask questions in the [GitHub Issues](https://github.com/FridleyLab/CMH_Introduction_to_R/issues).
 
 ## Overview
 
-This is a 6 week course designed to introduce future users to R and Rstudio.
+This is a 1 day workshop designed to introduce future users to R and Rstudio.
 We will cover data cleaning using the `tidyverse`, creating visuals with `ggplot`,
 basic statistical analysis and writing documents with `Rmarkdown`. In the end 
 you should be able to: 
@@ -112,35 +111,19 @@ Basic statistics
   - ttest, correlation and chisq 
   - Model data 
   - Report findings from R output 
-    
-Final coding project 
-
-  - Organize projects and name objects in a uniform manner
-  - Create a reproducible workflow
-  - Setting up your own R installation 
 
 ## Materials/RStudio Cloud
 
-Materials will be made available on [GitHub](https://github.com/FridleyLab/Introduction-to-R/).  If you are using an organization-issued laptop, you may want to verify before you arrive that you can access GitHub.
-
-In this course, we will be using a version of RStudio available online. The class
-workspace can be accessed [here](https://rstudio.cloud/spaces/146648/join?access_code=lwgMkLa2E%2BSSKGUFRhilRqgJW1lz7OCF9pZVjhxf). Please create a user account before the first day of class 
-(or connect with either a GitHub account or Google account). 
+Materials will be made available on [GitHub](https://github.com/FridleyLab/CMH_Introduction_to_R).  If you are using an organization-issued laptop, you may want to verify before you arrive that you can access GitHub.
 
 ## Schedule and Links
 
-*   June 09 - `rmarkdown`
-    * [Zoom link](https://moffitt.zoom.us/j/95042034701)
-*   June 16 - Data import and wrangling part I
-    * [Zoom link](https://moffitt.zoom.us/j/99077101114)
-*   June 23 - Data import and wrangling part II
-    * [Zoom link](https://moffitt.zoom.us/j/92170925460)
-*   June 30 - Visualizations with `ggplot2`
-    * [Zoom link](https://moffitt.zoom.us/j/96225512559)
-*   July 07 - Basic statistics
-    * [Zoom link](https://moffitt.zoom.us/j/91931267792)
-*   July 17 - Best practices 
-    * [Zoom link](https://moffitt.zoom.us/j/96050438861)
+*   8:00 - 8:15 - Welcome
+*   8:15 - 9 - Intro to R and Github
+*   9 - 10 - data import and clean
+*   10 - 10:15 - break
+*   10:15 - 11:30 - data cleaning continued
+*   11:30 - 12:30 - Intro to ggplot2
 
 ## Instructors
 
@@ -149,9 +132,6 @@ Add links to personal websites and double check personal info
 * add small blurbs/pictures for each instructor? 
 -->
 
-This course is taught by members of Moffitt staff including Jordan
-Creed, a data analyst in the Department of Health Informatics, Zachary
-Thompson and Ram Thappa, biostatisticians in the Bioinformatics and
-Biostatistics Core.
+This workshop is taught by Jordan Creed and Alex Soupir and sponsored by Brooke Fridley.
 
 -----
