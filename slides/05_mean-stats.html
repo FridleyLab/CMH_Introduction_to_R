@@ -3,15 +3,12 @@
   <head>
     <title>Lea.orange[R]ning about Statistics</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Zachary Thompson" />
     <meta name="author" content="Alex Soupir" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view/tile-view.js"></script>
     <link href="libs/panelset/panelset.css" rel="stylesheet" />
     <script src="libs/panelset/panelset.js"></script>
-    <script src="libs/kePrint/kePrint.js"></script>
-    <link href="libs/lightable/lightable.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/moffitt-xaringan.css" type="text/css" />
     <link rel="stylesheet" href="css/moffitt-xaringan-extra.css" type="text/css" />
     <link rel="stylesheet" href="css/tachyons.moffitt.css" type="text/css" />
@@ -39,12 +36,12 @@ class: left bottom hide-count
 .talk-title[
 # Lea.orange[R]ning about Statistics
 
-Correlation, T-Test, Wilcoxon Rank Sum, and ANOVA
+T-Test, Wilcoxon Rank Sum, and ANOVA
 ]
 
 .talk-author[
-Zachary Thompson &amp;middot; Alex Soupir&lt;br&gt;
-.moffitt-gray[Moffitt Cancer Center]
+Alex Soupir&lt;br&gt;
+.moffitt-gray[Children's Mercy Hospital]
 ]
 
 .talk-date.moffitt-gray[
@@ -90,8 +87,6 @@ or to force either to be shown
  
   
 - Review of tables with janitor package
-
-- Correlation
 
 - Two-sample tests (T-test, Wilcoxon test)
 
@@ -221,345 +216,6 @@ target_p2 %&gt;%
 
  
 ---
- 
-# Correlation 
- 
-A correlation coefficient is a numerical measure of some type of correlation, meaning a statistical relationship between two variables.  
-
-Several types of correlation coefficient exist, each with their own definition and own range of usability and characteristics. They all assume values in the range from −1 to +1, where ±1 indicates the strongest possible agreement and 0 no agreement.
-
- Pearson
- 
- Spearman
- 
----
- 
-## Pearson Correlation 
-
- The .bg-orange.white[Pearson product-moment correlation coefficient], also known as r or Pearson's r, is a measure of the strength and direction of the linear relationship between two variables that is defined as the covariance of the variables divided by the product of their standard deviations.  Pearson's r is the best-known and most commonly used type of correlation coefficient. A relationship is linear when a change in one variable is associated with a proportional change in the other variable.
- 
-`\(r_{xy}\)` = `\(\frac{ \sum_{i = 1}^{n}  (x_{i}-  \overline{x} )(y_{i}- \overline{y})}{\sqrt(\sum_{i = 1}^{n}  (x_{i}-  \overline{x} )^{2})\sqrt(\sum_{i = 1}^{n}  (y_{i}-  \overline{y} )^{2})}\)` 
-
-*   n is the sample size
-*   `\(x_{i}\)` and `\(y_{i}\)`  are the individual sample points indexed with i
-*   `\(\overline{x} = \frac{1}{n}\sum_{i = 1}^{n} x_{i}\)` is the sample mean of x (similarly y)
-
-
-
----
- 
-## Pearson Correlation 
- 
-
-
-``` r
-r1 &lt;- target_p2 %&gt;% correlation::cor_test("CD3E", 
-                                          "IL7R", 
-                                          method = c("pearson") ) 
- 
-r2 &lt;- target_p2 %&gt;% correlation::cor_test("CD3E",
-                                          "CD19",
-                                          method = c("pearson") ) 
- 
-r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC", 
-                                          "KRAS", 
-                                          method = c("pearson") )
-```
-
----
- 
-## Pearson Correlation 
- 
-
-
-``` r
- knitr::kable(bind_rows(r1,r2,r3 ), format = 'html', digits = 3) %&gt;%
-  kable_styling(font_size = 12)
-```
-
-&lt;table class="table" style="font-size: 12px; color: black; margin-left: auto; margin-right: auto;"&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:left;"&gt; Parameter1 &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Parameter2 &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; r &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; CI &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; CI_low &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; CI_high &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; t &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; df_error &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; p &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Method &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; n_Obs &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; CD3E &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; IL7R &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.215 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.117 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.309 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 4.266 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 376 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; CD3E &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; CD19 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.545 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.612 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.470 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -12.592 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 376 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; MYC &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; KRAS &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.169 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.265 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.069 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -3.325 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 376 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.001 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; Pearson &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-
-
-
----
-
-## Pearson Correlation Scatter Plot
-
-.panelset[
-.panel[.panel-name[R Code]
-
-
-``` r
-ggplot(target_p2) + 
-  aes(CD3E, IL7R) + 
-  geom_point() + 
-  annotate(geom = "text", x = 10, y = 800, 
-           label = paste("r = ", round(r1$r, 2), sep = ""),
-           color = "red")
-```
-]
-
-.panel[.panel-name[Plot]
-
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-10-1.png" width="100%" /&gt;
-]
-]
- 
-
-
-
-
----
-
-## Pearson Correlation Scatter Plot
-  
-.panelset[
-.panel[.panel-name[R Code]
-
-
-``` r
-ggplot(target_p2) + 
-  aes(CD3E, CD19) + 
-  geom_point() + 
-  annotate(geom = "text", x = 500, y = 1000, 
-           label = paste("r = ", round(r2$r, 2), sep = ""),
-           color = "red")
-```
-]
-
-.panel[.panel-name[Plot]
-
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-11-1.png" width="100%" /&gt;
-]
-]
-
- 
-
----
-
-## Pearson Correlation Scatter Plot
-  
-.panelset[
-.panel[.panel-name[R Code]
-
-
-``` r
-ggplot(target_p2) + 
-  aes(MYC, KRAS) + 
-  geom_point() + 
-  annotate(geom = "text", x = 0, y = 325, 
-           label = paste("r = ", round(r3$r, 2), sep = ""),  
-           color = "red")
-```
-]
-
-.panel[.panel-name[Plot]
-
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-12-1.png" width="100%" /&gt;
-]
-]
-
- 
-
-
-
- 
-
-
-
-
----
-
-## Correllation Matrix 
- 
-
-
-``` r
-target_p2 %&gt;% 
-  select(CD3E, IL7R, CD19, MYC, KRAS) %&gt;%
-  cor() %&gt;% round(.,2)
-```
-
-```
-      CD3E IL7R  CD19   MYC  KRAS
-CD3E  1.00 0.21 -0.54  0.26 -0.19
-IL7R  0.21 1.00  0.07  0.13  0.16
-CD19 -0.54 0.07  1.00 -0.17  0.20
-MYC   0.26 0.13 -0.17  1.00 -0.17
-KRAS -0.19 0.16  0.20 -0.17  1.00
-```
-
-
----
-
-
-## Spearman Correlation 
-
-The Spearman correlation evaluates the monotonic relationship between two continuous or ordinal variables. It is a nonparametric measure of rank correlation (statistical dependence between the rankings of two variables). In a monotonic relationship, the variables tend to change together, but not necessarily at a constant rate. The Spearman correlation coefficient is based on the ranked values for each variable rather than the raw data.
- 
-
-
----
-
-
-
-## Spearman Correlation example of monotonic relationship
-
-
- 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-15-1.png" width="100%" /&gt;
-
-
----
-
-
- 
-
-## Spearman Correlation 
- 
-
-
-``` r
-r1 &lt;- target_p2 %&gt;% correlation::cor_test("CD3E", 
-                                          "IL7R", 
-                                          method = c("spearman") ) 
- 
-r2 &lt;- target_p2 %&gt;% correlation::cor_test("CD3E",
-                                          "CD19",
-                                          method = c("spearman") ) 
- 
-r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC", 
-                                          "KRAS", 
-                                          method = c("spearman") )
-```
-
----
- 
-## Spearman Correlation 
- 
-
-
-``` r
- knitr::kable(bind_rows(r1, r2, r3), format = 'html', digits = 3) %&gt;%
-  kable_styling(font_size = 12)
-```
-
-&lt;table class="table" style="font-size: 12px; color: black; margin-left: auto; margin-right: auto;"&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:left;"&gt; Parameter1 &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Parameter2 &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; rho &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; CI &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; CI_low &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; CI_high &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; S &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; p &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Method &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; n_Obs &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; CD3E &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; IL7R &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.315 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.218 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 6165357 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; CD3E &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; CD19 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.629 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.688 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.562 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 14665217 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; MYC &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; KRAS &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.198 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.95 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.296 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; -0.097 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 10788140 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; Spearman &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 378 &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-
- 
----
 
 # Two sample tests
 
@@ -636,7 +292,7 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-18-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -661,7 +317,7 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-19-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -716,7 +372,7 @@ It can also be used on related samples or matched samples to assess whether thei
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-21-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-11-1.png" width="100%" /&gt;
 ]
 
 .panel[.panel-name[R Code]
@@ -760,7 +416,7 @@ ggplot(target_p2 , aes(gender, NOTCH1, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-22-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-12-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -792,7 +448,7 @@ The p-value isn't below the 0.05 threshold, therefore we cannot reject the null 
 ## Analysis of Variance (ANOVA)
 
  
-Analysis of variance, or ANOVA, is performed to assess if the variance between groups is larger than the variance within groups. The anova is performed on a formula which describes a continuous measure and a categorical variable (think height by gender) that takes the form `continuous ~ categorical` just as the other tests before.
+Analysis of variance, or ANOVA, is performed to assess if means are different between groups (can be more than 2 groups). The anova is performed on a formula which describes a continuous measure and a categorical variable (think height by gender) that takes the form `continuous ~ categorical` just as the other tests before.
 
 
 ---
@@ -803,7 +459,7 @@ Analysis of variance, or ANOVA, is performed to assess if the variance between g
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-24-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-14-1.png" width="100%" /&gt;
 ]
 
 .panel[.panel-name[R Code]
@@ -847,7 +503,7 @@ ggplot(target_p2 , aes(gender, PAX5, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-25-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-15-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -872,7 +528,7 @@ Residuals   376 5841671   15536
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-The p-value very small, indicating that there is a statistically significant difference between our 2 groups (gender). The variance between groups is much greater than the variance within groups (202,182 vs 15,536, respectively).
+The p-value very small, indicating that there is a statistically significant difference in PAX5 expression between our 2 groups (gender).
 
 ---
 

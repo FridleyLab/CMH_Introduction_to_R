@@ -1,10 +1,9 @@
 ---
 title: "Lea.orange[R]ning about Statistics"
-subtitle: "Chi-Squared, Fishers Exact, and Survival with Kaplan Meier"
+subtitle: "Chi-Squared, Fisher's Exact, and Survival with Kaplan Meier"
 author: 
   - Alex Soupir
-  - Zachary Thompson 
-institute: "Moffitt Cancer Center"
+institute: "Children's Mercy Hospital"
 date: "Feb 28, 2025"
 output:
   xaringan::moon_reader:
@@ -181,7 +180,7 @@ or to force either to be shown
   
 - Chi square test
 
-- Fishers Exact Test
+- Fisher's Exact Test
 
 - Survival Analysis using Kaplan Meier
 
@@ -519,30 +518,15 @@ legend(100, .3, c("Female", "Male"), lty = 2:3)
 
 ---
 
-## Survival Analysis (CoxPH)
+## Survival Analysis P-value
 
-To extract model statistics we can fit using `coxph` instead of `survfit`
+To extract model statistics we can use `surv_pvalue` with our model:
 
 ```{r, echo = TRUE, fig.show = "hide", eval = FALSE}
-km_fit_gender_cph <- coxph(Surv(days_to_follow_up, event) ~ gender, data=target_p2)
-summary(km_fit_gender_cph)
+surv_pvalue(km_fit_gender)
 ```
 
----
-
-## Survival Analysis (CoxPH)
-
-To extract model statistics we can fit using `coxph` instead of `survfit`
-
-```{r comment=NA, results = "asis", echo = FALSE}
-km_fit_gender_cph <- coxph(Surv(days_to_follow_up, event) ~ gender, data=target_p2)
-dat = summary(km_fit_gender_cph) %>% capture.output()
-dat_prepped = prep_summary(dat)
-
-# Wrap in <pre> tags with the remark-code-small class
-cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(dat_prepped, collapse = "\n")))
-```
-
+We see that there is no significant difference in survival between gender. 
 
 ---
 

@@ -2,9 +2,8 @@
 title: "Lea.orange[R]ning about Statistics"
 subtitle: "T-Test, Wilcoxon Rank Sum, and ANOVA"
 author: 
-  - Zachary Thompson 
   - Alex Soupir
-institute: "Moffitt Cancer Center"
+institute: "Children's Mercy Hospital"
 date: "Feb 28, 2025"
 output:
   xaringan::moon_reader:
@@ -444,7 +443,7 @@ The p-value isn't below the 0.05 threshold, therefore we cannot reject the null 
 ## Analysis of Variance (ANOVA)
 
  
-Analysis of variance, or ANOVA, is performed to assess if the variance between groups is larger than the variance within groups. The anova is performed on a formula which describes a continuous measure and a categorical variable (think height by gender) that takes the form `continuous ~ categorical` just as the other tests before.
+Analysis of variance, or ANOVA, is performed to assess if means are different between groups (can be more than 2 groups). The anova is performed on a formula which describes a continuous measure and a categorical variable (think height by gender) that takes the form `continuous ~ categorical` just as the other tests before.
 
 
 ---
@@ -521,7 +520,7 @@ summary(pax5_anova)
  
 ```
 
-The p-value very small, indicating that there is a statistically significant difference between our 2 groups (gender). The variance between groups is much greater than the variance within groups (202,182 vs 15,536, respectively).
+The p-value very small, indicating that there is a statistically significant difference in PAX5 expression between our 2 groups (gender).
 
 ---
 

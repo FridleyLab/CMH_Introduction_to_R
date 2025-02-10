@@ -4,7 +4,6 @@
     <title>Lea.orange[R]ning about Statistics</title>
     <meta charset="utf-8" />
     <meta name="author" content="Alex Soupir" />
-    <meta name="author" content="Zachary Thompson" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view/tile-view.js"></script>
@@ -37,12 +36,12 @@ class: left bottom hide-count
 .talk-title[
 # Lea.orange[R]ning about Statistics
 
-Chi-Squared, Fishers Exact, and Survival with Kaplan Meier
+Chi-Squared, Fisher's Exact, and Survival with Kaplan Meier
 ]
 
 .talk-author[
-Alex Soupir &amp;middot; Zachary Thompson&lt;br&gt;
-.moffitt-gray[Moffitt Cancer Center]
+Alex Soupir&lt;br&gt;
+.moffitt-gray[Children's Mercy Hospital]
 ]
 
 .talk-date.moffitt-gray[
@@ -91,7 +90,7 @@ or to force either to be shown
   
 - Chi square test
 
-- Fishers Exact Test
+- Fisher's Exact Test
 
 - Survival Analysis using Kaplan Meier
 
@@ -511,40 +510,16 @@ legend(100, .3, c("Female", "Male"), lty = 2:3)
 
 ---
 
-## Survival Analysis (CoxPH)
+## Survival Analysis P-value
 
-To extract model statistics we can fit using `coxph` instead of `survfit`
+To extract model statistics we can use `surv_pvalue` with our model:
 
 
 ``` r
-km_fit_gender_cph &lt;- coxph(Surv(days_to_follow_up, event) ~ gender, data=target_p2)
-summary(km_fit_gender_cph)
+surv_pvalue(km_fit_gender)
 ```
 
----
-
-## Survival Analysis (CoxPH)
-
-To extract model statistics we can fit using `coxph` instead of `survfit`
-
-&lt;pre class='remark-code-small'&gt;Call:
-coxph(formula = Surv(days_to_follow_up, event) ~ gender, data = target_p2)
-
-  n= 375, number of events= 76 
-   (3 observations deleted due to missingness)
-
-              coef exp(coef) se(coef)      z Pr(&amp;gt;|z|)
-gendermale -0.1654    0.8475   0.2385 -0.694    0.488
-
-           exp(coef) exp(-coef) lower .95 upper .95
-gendermale    0.8475       1.18     0.531     1.353
-
-Concordance= 0.53  (se = 0.029 )
-Likelihood ratio test= 0.47  on 1 df,   p=0.5
-Wald test            = 0.48  on 1 df,   p=0.5
-Score (logrank) test = 0.48  on 1 df,   p=0.5
-&lt;/pre&gt;
-
+We see that there is no significant difference in survival between gender. 
 
 ---
 

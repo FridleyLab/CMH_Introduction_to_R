@@ -2,9 +2,8 @@
 title: "Data visualization"
 subtitle: "ggplot2"
 author: 
-  - Ram Thapa
   - Alex Soupir
-institute: "Moffitt Cancer Center"
+institute: "Children's Mercy Hospital"
 date: "Feb 28, 2025"
 output:
   xaringan::moon_reader:
