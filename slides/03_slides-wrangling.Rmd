@@ -2,17 +2,17 @@
 title: "Data wrangling"
 subtitle: "Cleaning and manipulating data"
 author: 
-  - Jordan Creed
-institute: "Moffitt Cancer Center"
-date: "June 23, 2021"
+  - Jordan Creed, Alex Soupir
+institute: "Children's Mercy Hospital"
+date: 'February 28, 2025'
 output:
   xaringan::moon_reader:
     lib_dir: libs
     chakra: libs/remark-0.14.0.min.js
     css: 
-      - css/moffitt-xaringan.css
-      - css/moffitt-xaringan-extra.css
+      - css/cmh-xaringan.css
       - css/tachyons.moffitt.css
+      - css/cmh-xaringan-extra.css
     seal: false
     nature:
       titleSlideClass: ["bottom", "left"]
@@ -38,7 +38,7 @@ options(width = 70)
 ```
 
 name: title
-class: left bottom hide-count
+class: left bottom hide-count no-logo cmh-slide-border
 
 <!-- Slide Extras -->
 
@@ -105,37 +105,13 @@ or to force either to be shown
 -->
 
 ---
-
-## Homework Question 1: Which is "tidy"data 
-
-.pull-left[
-A)
-
-<img src="03_slides-wrangling_files/figure-html/data-a.png" height="135px" width="500px" />
-
-
-B) 
-
-<img src="03_slides-wrangling_files/figure-html/data-b.png" height="135px" width="500px" />
-]
-
-.pull-right[
-
-.accent-blue[C)]
-
-![](03_slides-wrangling_files/figure-html/answer.png)
-
-D) 
-
-![](03_slides-wrangling_files/figure-html/data-d.png)
-]
-
----
-class: inverse center middle
+class: inverse center middle no-logo
 
 # Complex wrangling
 
 ---
+class: no-logo
+
 ## Mutating `join()` <img src="02_slides-import_files/figure-html/dplyr-logo.png" width="10%" align="right"/>
 
 Mutating joins combine variables from two data frames
@@ -149,6 +125,8 @@ XXX_join(left_data, right_data, by = c("left_id" = "right_id"))
 <img src="03_slides-wrangling_files/figure-html/joins-one.png" width="40%" class="center"/>
 
 ---
+class: no-logo
+
 ## Filtering `join()` <img src="02_slides-import_files/figure-html/dplyr-logo.png" width="10%" align="right"/>
 
 `semi_join()` : returns rows from "left" data with matching values in "right" 
@@ -158,6 +136,8 @@ data, but only returns columns from "left" data
 "right" data and only returns columns from "left" data
 
 ---
+class: no-logo
+
 ## `tidyr` actions <img src="02_slides-import_files/figure-html/tidyr-logo.png" width="10%" align="right"/>
 
 `r emo::ji("coder")` Tidy data isn't necessarily always long or wide.
@@ -169,6 +149,8 @@ data, but only returns columns from "left" data
 There may be times where you need to combine `pivot_wider()` and `pivot_longer()`
 
 ---
+class: no-logo
+
 ## Missing values propagate
 
 ```{r}
@@ -186,6 +168,8 @@ sum(NA, 6, 12)
 **WORKS:** `filter(data, is.na(variable))`
 
 ---
+class: no-logo
+
 ## `tidyr` actions <img src="02_slides-import_files/figure-html/tidyr-logo.png" width="10%" align="right"/>
 
 `drop_na()`, `fill()`, and `replace_na()` format missing values
@@ -194,6 +178,8 @@ sum(NA, 6, 12)
 * `replace_na(list(variable2 = "replacement value"))` : replaces `NA`s with a specified value
 
 ---
+class: no-logo
+
 ## `tidyr` actions <img src="02_slides-import_files/figure-html/tidyr-logo.png" width="10%" align="right"/>
 
 `separate()`, `extract()` and `unite()` split and combine character columns
@@ -203,6 +189,7 @@ sum(NA, 6, 12)
 * `unite(tibble_name, "combined_var_name", variable1, variable2, sep = ":")`
 
 ---
+class: no-logo
 
 <img src="02_slides-import_files/figure-html/tidyr-cheatsheet.png" width="75%" class="center"/>
 

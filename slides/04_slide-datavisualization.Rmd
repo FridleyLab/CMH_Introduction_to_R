@@ -10,9 +10,9 @@ output:
     lib_dir: libs
     chakra: libs/remark-0.14.0.min.js
     css: 
-      - css/moffitt-xaringan.css
-      - css/moffitt-xaringan-extra.css
+      - css/cmh-xaringan.css
       - css/tachyons.moffitt.css
+      - css/cmh-xaringan-extra.css
     seal: false
     nature:
       titleSlideClass: ["bottom", "left"]
@@ -38,7 +38,7 @@ options(width = 70)
 ```
 
 name: title
-class: left center hide-count
+class: left center hide-count no-logo cmh-slide-border
 
 <!-- Slide Extras -->
 
@@ -105,7 +105,7 @@ or to force either to be shown
 -->
 
 ---
-class: middle
+class: middle no-logo
 
 - Data visualization is important in most phases of data analysis workflow i.e. from exploratory data analysis to effectively communicating our results
 
@@ -118,6 +118,8 @@ class: middle
 This quote from John Tukey explains the essence of data visualization
 
 ---
+class: no-logo
+
 Plotting with [{ggplot2}](https://ggplot2.tidyverse.org/) package.
 .pull-left[
 - {`ggplot2`} is one of the most popular R packages for data visualization. It is a part of {`tidyverse`} R meta-package
@@ -133,6 +135,8 @@ Artwork by @allison_horst
 ]
 
 ---
+class: no-logo
+
 ## Grammar of graphics
 
 The basic idea is that a statistical graphic can be created in a layered fashion, starting with a layer showing the data then adding layers of graphical objects, annotations and statistical summaries
@@ -142,6 +146,8 @@ The basic idea is that a statistical graphic can be created in a layered fashion
 ]
 
 ---
+class: no-logo
+
 ### Data layer
 
 Data to be plotted
@@ -157,6 +163,8 @@ Key features of tidy data:
 > *Most of plotting problems in ggplot2 boil down to data wrangling problems*
 
 ---
+class: no-logo
+
 ```{r data, echo = FALSE, message = FALSE}
 library(tidyverse)
 library(flipbookr)
@@ -184,6 +192,7 @@ ggplot(data = target_clinical)
 ]
 
 ---
+class: no-logo
 
 ### Aesthetic mapping layer
 
@@ -194,6 +203,8 @@ Each aesthetic can be mapped to a variable (or set to a constant value) by assoc
 `ggplot2` automatically assigns a unique level of the aesthetic to each unique value of the variable by a process called scaling, and adds a legend that explains which levels correspond to which values.
 
 ---
+class: no-logo
+
 .panelset[
 .panel[.panel-name[R Code]
 
@@ -212,6 +223,8 @@ ggplot(
 ]
 
 ---
+class: no-logo
+
 ### Geometries layer
 
 Geometric object or `geom` defines the visual object and determines the type of graphs 
@@ -237,7 +250,7 @@ ggplot(
 '+' is used to combine ggplot2 elements
 
 ---
-class: middle
+class: middle no-logo
 
 ### ...revisiting aesthetic layer
 
@@ -253,6 +266,8 @@ Aesthetic | Description
 `linetype` | line dash pattern
 
 ---
+class: no-logo
+
 #### Mapping onto color aesthetic
 
 .panelset[
@@ -276,6 +291,8 @@ ggplot(
 ]
 
 ---
+class: no-logo
+
 #### Mapping onto size aesthetic
 
 .panelset[
@@ -301,6 +318,8 @@ ggplot(
 ]
 
 ---
+class: no-logo
+
 ### [`r icons::icon_style(icons::fontawesome("link", style = "solid"), scale = 0.7, fill = "skyblue")` geom catalogue](https://ggplot2.tidyverse.org/reference/index.html#section-layers)
 
 
@@ -409,6 +428,8 @@ DT::datatable(
 ```
 
 ---
+class: no-logo
+
 ### Statistics layer
 
 Statistical layer allows you to plot statistical values, typically summaries, calculated from the data.
@@ -433,6 +454,8 @@ ggplot(
 ]
 ]
 ---
+class: no-logo
+
 Under the hood, data is transformed or new value is calculated by `stat` argument (short for statistical transformation) in `geom_*` functions
 
 .pull-left[
@@ -454,6 +477,8 @@ p2 <- ggplot(
 ]
 
 ---
+class: no-logo
+
 ### [`r icons::icon_style(icons::fontawesome("link", style = "solid"), scale = 0.7, fill = "skyblue")` stat catalogue](https://ggplot2.tidyverse.org/reference/index.html#section-layers)
 
 ```{r, echo = FALSE}
@@ -540,6 +565,8 @@ DT::datatable(
 ```
 
 ---
+class: no-logo
+
 ### Scales layer
 
 Scales control the aesthetic mapping between **data** and **aesthetics** and to control the aesthetic mapping, you can use a scale specification like
@@ -555,7 +582,9 @@ Scale takes care of the details of converting data  into aesthetics like size, c
 Scale translates back and forth between variable range and graphical property range
 
 Scale is also responsible for creating a guide (axis or legend) which is needed to provide an inverse mapping, converting aesthetic values back into data values
+
 ---
+class: no-logo
 
 Every aesthetic in a plot is associated with exactly one scale
 
@@ -575,6 +604,8 @@ Scale can be accessed by using function of form:
 - `scale_alpha_*()`
 
 ---
+class: no-logo
+
 ggplot2 adds a default scale for each of the aesthetics used in the plot
 
 .panelset[
@@ -607,6 +638,8 @@ ggplot(
 ]
 
 ---
+class: no-logo
+
 We can override the defaults by adding the `scale` function
 
 .panelset[
@@ -636,6 +669,8 @@ ggplot(
 ]
 
 ---
+class: no-logo
+
 ### Facet layer
 
 Facet layer allows us to create subplots within the same graphic object
@@ -655,6 +690,7 @@ ggplot(
 ```
 
 ---
+class: no-logo
 
 There are two types of facetting:
 
@@ -683,6 +719,7 @@ ggplot(
 ]
 
 ---
+class: no-logo
 
 - `facet_grid()`: produces a 2D grid of panels defined by variables which form the rows and columns
 
@@ -708,6 +745,8 @@ ggplot(
 ]
 ]
 ---
+class: no-logo
+
 ### Theme layer
 
 Controls all non-data plot elements and appearance
@@ -722,6 +761,7 @@ rectangle | `element_rect()`
 
 `theme()` function lets us override the default theme elements by calling above element functions
 ---
+class: no-logo
 
 #### Default theme
 
@@ -747,6 +787,8 @@ ggplot(
 ]
 
 ---
+class: no-logo
+
 #### Changing theme elements
 
 .panelset[
@@ -780,6 +822,8 @@ ggplot(
 ]
 
 ---
+class: no-logo
+
 We can avoid the `theme()` function by using built-in themes
 
 .panelset[
@@ -807,6 +851,8 @@ Set a default theme for the rest of your plots using `theme_set()` at the top of
 ]
 ]
 ---
+class: no-logo
+
 .w-70.center[
 ![](04_slide-datavisualization_files/figure-html/theme_elements.png)
 ]
@@ -814,6 +860,8 @@ Set a default theme for the rest of your plots using `theme_set()` at the top of
 .footnote[Source: https://henrywang.nl/ggplot2-theme-elements-demonstration/]
 
 ---
+class: no-logo
+
 ### Global vs local aesthetic mapping
 
 .pull-left[
@@ -847,6 +895,8 @@ ggplot(
 if there is only one layer in the plot, the way aesthetics are specified doesn’t make any difference 
 
 ---
+class: no-logo
+
 However, when we start adding more layers, the distinction becomes more important
 
 .panelset[
@@ -872,6 +922,7 @@ ggplot(
 ]
 ]
 ---
+class: no-logo
 
 .. and `ggplot2` treats aesthetics defined in `geom_*()` function as local mappings and use them to extend or overwrite the global mappings for that layer only
 
@@ -898,6 +949,8 @@ Since `color` aesthetic is defined inside `geom_point()` only, this mapping is a
 ]
 
 ---
+class: no-logo
+
 ### Setting vs mapping aesthetics
 
 Aesthetic property can also be set to a single value (constant) by specifying it in the layer parameters. 
@@ -920,7 +973,9 @@ Aesthetic property can also be set to a single value (constant) by specifying it
   geom_point(color = "blue")
 ```
 ]
+
 ---
+class: no-logo
 
 .pull-left[
 ### Mapping
@@ -951,7 +1006,7 @@ ggplot(
 ]
 
 ---
-class: middle center
+class: middle center no-logo
 
 ### ggplot2 codes step-by-step
 
@@ -977,10 +1032,13 @@ ggplot(
     base_size = 15)
 ```
 ---
+class: no-logo
 
 `r chunk_reveal("ggplotflipbook", widths = c(50, 50), chunk_option = "fig.height = 9")`
 
 ---
+class: no-logo
+
 ## Useful resources
 
 - [ggplot2 cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf) from RStudio

@@ -1,18 +1,18 @@
 ---
-title: "Rmarkdown"
-subtitle: "Creating interactive documents"
+title: "r::programming()"
+subtitle: "Getting started with R and RStudio"
 author: 
-  - Jordan Creed
-institute: "Moffitt Cancer Center"
-date: 'June 09, 2021'
+  - Jordan Creed, Alex Soupir
+institute: "Children's Mercy Hospital"
+date: 'February 28, 2025'
 output:
   xaringan::moon_reader:
     lib_dir: libs
     chakra: libs/remark-0.14.0.min.js
     css: 
-      - css/moffitt-xaringan.css
-      - css/moffitt-xaringan-extra.css
+      - css/cmh-xaringan.css
       - css/tachyons.moffitt.css
+      - css/cmh-xaringan-extra.css
     seal: false
     nature:
       titleSlideClass: ["bottom", "left"]
@@ -38,7 +38,7 @@ options(width = 70)
 ```
 
 name: title
-class: left bottom hide-count
+class: left bottom hide-count no-logo cmh-slide-border
 
 <!-- Slide Extras -->
 
@@ -110,6 +110,7 @@ class: inverse center middle
 # R & RStudio
 
 ---
+class: no-logo
 
 ### RStudio 
 
@@ -120,6 +121,8 @@ class: inverse center middle
 RStudio a GUI for the R language. 
 
 ---
+class: no-logo 
+
 ### Packges
 
 A `package` is a collection of functions, data, and documentation that extend
@@ -132,10 +135,14 @@ vs
 `library("foo")`
 
 ---
+class: no-logo 
+
 ### The tidyverse
 
 ![](01_slides-rmarkdown_files/figure-html/tidyverse.png)
 ---
+class: no-logo 
+
 ## Data types and structures
 
 Data types: 
@@ -155,12 +162,15 @@ Data structures:
 being that `dataframes` have rows and `tibbles` do not 
 
 ---
+class: no-logo 
 
 <img src="01_slides-rmarkdown_files/figure-html/rstudio_cheatsheet.png" width="65%" class="center"/>
 
 [r cheatsheets](https://www.rstudio.com/resources/cheatsheets/)
 
 ---
+class: no-logo 
+
 ## R Projects & `here()`
 
 Working directory = where R looks for your files 
@@ -177,88 +187,16 @@ and fill out the information
 `r emo::ji("cloud")` In RStudio Cloud we will be working inside a project 
 so you will not have the option to create projects and switch between them.
 
-
 ---
-class: inverse center middle
-
-# Rmarkdown
-
----
-## Rmarkdown
-
-<img src="01_slides-rmarkdown_files/figure-html/rmarkdown-workflow.png" width="100%" align="right"/>
-
-Allows you to share code, comments and outputs easily 
-
-`r emo::ji("star")` REPRODUCIBLE! `r emo::ji("star")`
-
-3 elements: YAML header, formatted text, code 
-
----
-## Rmarkdown
-
-<img src="01_slides-rmarkdown_files/figure-html/rmarkdown-diagram.png" width="100%" class="center"/>
-
----
-## YAML
-
-Located at the top of your file and enclosed by `---`
-
-Controls "whole document" parameters and settings 
-
-```
----
-title: "My super cool document"
-author: 
-  - Jordan Creed
-output: html_document
----
-```
-
----
-## Formatted Text 
-
-Rmarkdown uses regular markdown rules/syntax.
-
-When you `knit` your document the final output will display according 
-to the formatting rules on your `.Rmd`
-
----
-## Code
-
-Code can be written as either code chunks or inline code
-
-Output can be modified by chunk options placed inside `{}`
-
-  * `eval = FALSE` keeps code from being evaluated 
-  * `echo = FALSE` keeps code from being displayed 
-  * `message = FALSE` and `warning = FALSE` keeps messages/warnings from being displayed
-  
----
-## 
-
-<img src="01_slides-rmarkdown_files/figure-html/rmarkdown-cheatsheet.png" width="65%" class="center"/>
-
----
+class: no-logo 
 
 ## GitHub
 
 .pull-left[
 * GitHub is a code hosting platform used for collaborating and code sharing
-* Materials and information for the course can be found on the class GitHub page
-* Class GitHub: [https://github.com/FridleyLab/Introduction-to-R](https://github.com/FridleyLab/Introduction-to-R)
+* Materials and information for the course can be found on the workshop GitHub page
+* Class GitHub: [https://github.com/FridleyLab/CMH_Introduction_to_R](https://github.com/FridleyLab/CMH_Introduction_to_R)
 ]
 
 .pull-right[<img src="01_slides-rmarkdown_files/figure-html/octocat.png" width="75%" class="center"/>]
 
----
-
-## RStudio Cloud
-
-To get started:
-
-* Create an account with [RStudio Cloud](https://login.rstudio.cloud/register)
-* Log in
-* To your right you should see "Introduction To R Programming Class (2021)" -
-click on it 
-* Under "Projects" press "Start" beside "Lab One"

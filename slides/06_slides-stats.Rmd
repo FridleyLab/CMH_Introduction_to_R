@@ -1,18 +1,18 @@
 ---
 title: "Lea.orange[R]ning about Statistics"
-subtitle: "Correlation, Scatterplots. and Regression"
+subtitle: "Correlation, Scatterplots and Regression"
 author: 
   - Alex Soupir
 institute: "Children's Mercy Hospital"
-date: "Feb 28, 2025"
+date: "February 28, 2025"
 output:
   xaringan::moon_reader:
     lib_dir: libs
     chakra: libs/remark-0.14.0.min.js
     css: 
-      - css/moffitt-xaringan.css
-      - css/moffitt-xaringan-extra.css
+      - css/cmh-xaringan.css
       - css/tachyons.moffitt.css
+      - css/cmh-xaringan-extra.css
     seal: false
     nature:
       titleSlideClass: ["bottom", "left"]
@@ -76,7 +76,7 @@ prep_summary = function(output){
 ```
 
 name: title
-class: left bottom hide-count
+class: left bottom hide-count no-logo cmh-slide-border
 
 <!-- Slide Extras -->
 
@@ -148,6 +148,7 @@ or to force either to be shown
 -->
 
 ---
+class: no-logo
 
 ## What you will learn to run
  
@@ -163,6 +164,7 @@ or to force either to be shown
  
  
 ---
+class: no-logo
 
 ## Scatter plots 
 
@@ -188,6 +190,7 @@ ggplot((target_p2),
  
  
 ---
+class: no-logo
 
 ## Scatter plots 
 
@@ -214,6 +217,7 @@ ggplot((target_p2),
 
 
 ---
+class: no-logo
 
 ## Scatter plots 
 
@@ -239,7 +243,8 @@ ggplot((target_p2),
 
 
 ---
- 
+class: no-logo
+
 # Correlation 
  
 A correlation coefficient is a numerical measure of some type of correlation, meaning a statistical relationship between two variables.  
@@ -253,7 +258,8 @@ Very common :
  Spearman
  
 ---
- 
+class: no-logo
+
 ## Pearson Correlation 
 
  The .bg-orange.white[Pearson product-moment correlation coefficient], also known as r or Pearson's r, is a measure of the strength and direction of the linear relationship between two variables that is defined as the covariance of the variables divided by the product of their standard deviations.  Pearson's r is the best-known and most commonly used type of correlation coefficient. A relationship is linear when a change in one variable is associated with a proportional change in the other variable.
@@ -267,7 +273,8 @@ $r_{xy}$ = $\frac{ \sum_{i = 1}^{n}  (x_{i}-  \overline{x} )(y_{i}- \overline{y}
 
 
 ---
- 
+class: no-logo
+
 ## Pearson Correlation 
  
 
@@ -289,7 +296,8 @@ r3 <- target_p2 %>% correlation::cor_test("MYC",
 ```
 
 ---
- 
+class: no-logo
+
 ## Pearson Correlation 
  
 
@@ -302,7 +310,8 @@ r3 <- target_p2 %>% correlation::cor_test("MYC",
 
 
 ---
- 
+class: no-logo
+
 ## Pearson Correlation 
  
 
@@ -316,6 +325,7 @@ r3 <- target_p2 %>% correlation::cor_test("MYC",
 
 
 ---
+class: no-logo
 
 ## Pearson Correlation Scatter Plot
 
@@ -345,6 +355,7 @@ ggplot(target_p2) +
 
 
 ---
+class: no-logo
 
 ## Pearson Correlation Scatter Plot
   
@@ -374,6 +385,7 @@ ggplot(target_p2) +
  
 
 ---
+class: no-logo
 
 ## Pearson Correlation Scatter Plot
   
@@ -401,19 +413,14 @@ ggplot(target_p2) +
 ]
 ]
 
- 
-
-
 ```{r  comment=NA}
 
 
 ```
- 
-
-
 
 
 ---
+class: no-logo
 
 ## Correllation Matrix 
  
@@ -427,7 +434,7 @@ target_p2 %>%
 
 
 ---
-
+class: no-logo
 
 ## Spearman Correlation 
 
@@ -436,7 +443,7 @@ The Spearman correlation evaluates the monotonic relationship between two contin
 
 
 ---
-
+class: no-logo
 
 
 ## Spearman Correlation example of monotonic relationship
@@ -456,9 +463,7 @@ ggplot(pdata, aes(x,y)) + geom_point()
 
 
 ---
-
-
- 
+class: no-logo
 
 ## Spearman Correlation 
  
@@ -481,19 +486,18 @@ r3 <- target_p2 %>% correlation::cor_test("MYC",
 ```
 
 ---
- 
+class: no-logo
+
 ## Spearman Correlation 
  
-
 ```{r comment=NA}
  knitr::kable(bind_rows(r1, r2, r3), format = 'html', digits = 3) %>%
   kable_styling(font_size = 12)
 
 ```
 
-
- 
 ---
+class: no-logo
 
 ## Correllation Matrix 
  
@@ -508,7 +512,7 @@ target_p2 %>%
 
 
 ---
-
+class: no-logo
 
 # Regression 
 
@@ -519,7 +523,7 @@ target_p2 %>%
 
 
 ---
-
+class: no-logo
 
 ## Univariate Regression 
 
@@ -535,7 +539,7 @@ $Y_{i}$ = $\beta_{0}$ + $\beta_{1}$ $X_{1}$ + $\epsilon_{i}$ where $\epsilon_{i}
 
 
 ---
-
+class: no-logo
 
 ## Regression assumptions
 
@@ -548,7 +552,7 @@ $Y_{i}$ = $\beta_{0}$ + $\beta_{1}$ $X_{1}$ + $\epsilon_{i}$ where $\epsilon_{i}
 
 
 ---
-
+class: no-logo
 
 ##  Simple linear regression 
  
@@ -560,7 +564,7 @@ $Y_{i}$ = $\beta_{0}$ + $\beta_{1}$ $X_{1}$ + $\epsilon_{i}$ where $\epsilon_{i}
 ```
 
 ---
-
+class: no-logo
 
 ##  Simple linear regression 
  
@@ -582,6 +586,7 @@ cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(escaped_output, col
 
  
 ---
+class: no-logo
 
 ##  Regression plots 
   
@@ -607,6 +612,7 @@ cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(escaped_output, col
 
 
 ---
+class: no-logo
 
 ## Scatter Plot with linear regression line
 
@@ -640,6 +646,7 @@ ggplot(target_p2, aes(PAX5, CD19) ) +
 
 
 ---
+class: no-logo
 
 ## Zoom in on the Scatter Plot with linear regression line
 
@@ -670,6 +677,7 @@ ggplot(target_p2, aes(PAX5, CD19) ) +
   
 
 ---
+class: no-logo
 
 ## Multiple Regression 
 
@@ -691,6 +699,7 @@ $\epsilon_{i}$ ~ $N(0, \sigma^{2})$
 
 
 ---
+class: no-logo
 
 ## Multiple Regression 
 
@@ -705,6 +714,7 @@ $\beta$ coefficients).
 $\sigma^{2}$. These are the same assumptions that we used in simple regression with one predictor.
 
 ---
+class: no-logo
 
 ## Multiple Regression 
 
@@ -721,6 +731,8 @@ $\beta_{0}$, $\beta_{1}$, $\beta_{2}$, $\beta_{k}$. This means that each paramet
 
 
 ---
+class: no-logo
+
 ##  Multiple regression 
  
 
@@ -732,8 +744,7 @@ $\beta_{0}$, $\beta_{1}$, $\beta_{2}$, $\beta_{k}$. This means that each paramet
 
 
 ---
-
-
+class: no-logo
 
 ##  Multiple regression 
  
@@ -755,6 +766,7 @@ cat(sprintf("<pre class='remark-code-small'>%s</pre>", paste(escaped_output_mr, 
 ```
 
 ---
+class: no-logo
 
 ## Scatter Plot with linear regression lines
 
@@ -777,6 +789,7 @@ ggplot(target_p2, aes(x = PAX5, y = CD19, shape = gender, color = gender)) +
 ]
 
 ---
+class: no-logo
 
 ## Scatter Plot with linear regression line
 
@@ -799,7 +812,7 @@ ggplot(target_p2, aes(x = PAX5, y = CD19, shape = gender, color = gender)) +
 ]
 
 ---
- 
+class: no-logo
 
 
 ## Thank you! 

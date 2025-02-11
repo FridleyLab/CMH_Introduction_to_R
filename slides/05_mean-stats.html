@@ -9,9 +9,9 @@
     <script src="libs/tile-view/tile-view.js"></script>
     <link href="libs/panelset/panelset.css" rel="stylesheet" />
     <script src="libs/panelset/panelset.js"></script>
-    <link rel="stylesheet" href="css/moffitt-xaringan.css" type="text/css" />
-    <link rel="stylesheet" href="css/moffitt-xaringan-extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/cmh-xaringan.css" type="text/css" />
     <link rel="stylesheet" href="css/tachyons.moffitt.css" type="text/css" />
+    <link rel="stylesheet" href="css/cmh-xaringan-extra.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -20,7 +20,7 @@
 
 
 name: title
-class: left bottom hide-count
+class: left bottom hide-count no-logo cmh-slide-border
 
 &lt;!-- Slide Extras --&gt;
 
@@ -82,6 +82,7 @@ or to force either to be shown
 --&gt;
 
 ---
+class: no-logo
 
 ## What you will learn to run
  
@@ -94,6 +95,7 @@ or to force either to be shown
 
 
 ---
+class: no-logo
 
 ## Review of tables
  
@@ -110,6 +112,7 @@ janitor::tabyl(target_p2, gender, vital_status )
 ```
  
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -129,6 +132,7 @@ target_p2 %&gt;%
 
 
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -149,6 +153,7 @@ target_p2 %&gt;%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -170,6 +175,7 @@ target_p2 %&gt;%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -192,6 +198,7 @@ target_p2 %&gt;%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -216,6 +223,7 @@ target_p2 %&gt;%
 
  
 ---
+class: no-logo
 
 # Two sample tests
 
@@ -226,6 +234,7 @@ target_p2 %&gt;%
 
 
 ---
+class: no-logo
 
 ## T-test
  
@@ -242,6 +251,7 @@ distribution.
 
 
 ---
+class: no-logo
 
 ## T-test assumptions
 
@@ -258,6 +268,7 @@ distribution.
 
 
 ---
+class: no-logo
 
 ## T-test formula
 
@@ -270,9 +281,11 @@ where:
 `\(S^{2}_{p}\)` = `\(\frac{(N_{1}-1)s^{2}_{1} + (N_{1}-1)s^{2}_{1}}{N_{1}+N_{2}-2}\)`
 
  
+&lt;!-- I would maybe remove this slide --&gt;
 
 ---
- 
+class: no-logo
+
 ## T-test visulize boxplots
 
 The gene *MME* is a common marker for pre-B ALL. It is also known as CD10.
@@ -296,11 +309,9 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 ]
 ]
 
-
-
- 
 ---
- 
+class: no-logo
+
 ## T-test Visualize data Histograms
   
 .panelset[
@@ -321,11 +332,8 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 ]
 ]
 
-
-
-
 ---
-
+class: no-logo
 
 ## T-test R call
 
@@ -349,11 +357,8 @@ mean in group female   mean in group male
            138.68508             94.84367 
 ```
 
-
-
-
 ---
-
+class: no-logo
 
 ## Mann Whitney U Test (Wilcoxon Rank Sum Test) 
 
@@ -362,9 +367,8 @@ A popular non-parametric test to compare outcomes between two independent groups
 
 It can also be used on related samples or matched samples to assess whether their population mean ranks differ (i.e. it is a paired difference test). It can be used as an alternative to the paired Student's t-test when the distribution of the difference between two samples' means cannot be assumed to be normally distributed. This is the case with our TPM gene expression values.
 
-
-
 ---
+class: no-logo
 
 ## Wilcoxon test: Histograms
   
@@ -394,10 +398,9 @@ grid.arrange(mplot,wplot, ncol=2)
 ]
 ]
 
-
-
 ---
- 
+class: no-logo
+
 ## Wilcoxon test visulize boxplots gender
   
 .panelset[
@@ -420,10 +423,8 @@ ggplot(target_p2 , aes(gender, NOTCH1, fill = gender))  +
 ]
 ]
 
-
-
 ---
-
+class: no-logo
 
 ## Wilcoxon test gender
 
@@ -444,6 +445,7 @@ alternative hypothesis: true location shift is not equal to 0
 The p-value isn't below the 0.05 threshold, therefore we cannot reject the null hypothesis that there is no difference to accept the alternative that there is a difference.
 
 ---
+class: no-logo
 
 ## Analysis of Variance (ANOVA)
 
@@ -452,6 +454,7 @@ Analysis of variance, or ANOVA, is performed to assess if means are different be
 
 
 ---
+class: no-logo
 
 ## ANOVA: Histograms
   
@@ -481,10 +484,9 @@ grid.arrange(mplot,wplot, ncol=2)
 ]
 ]
 
-
-
 ---
- 
+class: no-logo
+
 ## ANOVA test visulize boxplots gender
   
 .panelset[
@@ -507,10 +509,8 @@ ggplot(target_p2 , aes(gender, PAX5, fill = gender))  +
 ]
 ]
 
-
-
 ---
-
+class: no-logo
 
 ## ANOVA test gender
 
@@ -531,8 +531,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 The p-value very small, indicating that there is a statistically significant difference in PAX5 expression between our 2 groups (gender).
 
 ---
-
-
+class: no-logo
 
 ## Thank you! 
   

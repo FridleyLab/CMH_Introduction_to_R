@@ -10,9 +10,9 @@ output:
     lib_dir: libs
     chakra: libs/remark-0.14.0.min.js
     css: 
-      - css/moffitt-xaringan.css
-      - css/moffitt-xaringan-extra.css
+      - css/cmh-xaringan.css
       - css/tachyons.moffitt.css
+      - css/cmh-xaringan-extra.css
     seal: false
     nature:
       titleSlideClass: ["bottom", "left"]
@@ -46,7 +46,7 @@ options(width = 70)
   library(gridExtra)
   library(broom)
    
-
+# they will do this set during live coding for lecture 3 
    
 # MERGE
 clinical <- read_delim(here::here("data/TARGET_P2_clinical.tsv"))
@@ -67,7 +67,7 @@ target_p2 <- left_join(clinical, geneexp, by = "case_submitter_id") %>%
 ```
 
 name: title
-class: left bottom hide-count
+class: left bottom hide-count no-logo cmh-slide-border
 
 <!-- Slide Extras -->
 
@@ -139,6 +139,7 @@ or to force either to be shown
 -->
 
 ---
+class: no-logo
 
 ## What you will learn to run
  
@@ -151,6 +152,7 @@ or to force either to be shown
 
 
 ---
+class: no-logo
 
 ## Review of tables
  
@@ -162,6 +164,7 @@ janitor::tabyl(target_p2, gender, vital_status )
 ```
  
 ---
+class: no-logo
 
 ## Review of tables
 ```{r comment=NA}
@@ -172,6 +175,7 @@ target_p2 %>%
 
 
 ---
+class: no-logo
 
 ## Review of tables
 ```{r comment=NA}
@@ -182,6 +186,7 @@ target_p2 %>%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 ```{r comment=NA}
@@ -194,6 +199,7 @@ target_p2 %>%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 ```{r comment=NA}
@@ -207,6 +213,7 @@ target_p2 %>%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 ```{r comment=NA}
@@ -222,6 +229,7 @@ target_p2 %>%
 
  
 ---
+class: no-logo
 
 # Two sample tests
 
@@ -232,6 +240,7 @@ target_p2 %>%
 
 
 ---
+class: no-logo
 
 ## T-test
  
@@ -248,6 +257,7 @@ distribution.
 
 
 ---
+class: no-logo
 
 ## T-test assumptions
 
@@ -264,6 +274,7 @@ distribution.
 
 
 ---
+class: no-logo
 
 ## T-test formula
 
@@ -276,9 +287,11 @@ where:
 $S^{2}_{p}$ = $\frac{(N_{1}-1)s^{2}_{1} + (N_{1}-1)s^{2}_{1}}{N_{1}+N_{2}-2}$
 
  
+<!-- I would maybe remove this slide -->
 
 ---
- 
+class: no-logo
+
 ## T-test visulize boxplots
 
 The gene *MME* is a common marker for pre-B ALL. It is also known as CD10.
@@ -304,11 +317,9 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 ]
 ]
 
-
-
- 
 ---
- 
+class: no-logo
+
 ## T-test Visualize data Histograms
   
 .panelset[
@@ -330,11 +341,8 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 ]
 ]
 
-
-
-
 ---
-
+class: no-logo
 
 ## T-test R call
 
@@ -347,11 +355,8 @@ t.test( MME ~ gender, data = target_p2,
  
 ```
 
-
-
-
 ---
-
+class: no-logo
 
 ## Mann Whitney U Test (Wilcoxon Rank Sum Test) 
 
@@ -360,9 +365,8 @@ A popular non-parametric test to compare outcomes between two independent groups
 
 It can also be used on related samples or matched samples to assess whether their population mean ranks differ (i.e. it is a paired difference test). It can be used as an alternative to the paired Student's t-test when the distribution of the difference between two samples' means cannot be assumed to be normally distributed. This is the case with our TPM gene expression values.
 
-
-
 ---
+class: no-logo
 
 ## Wilcoxon test: Histograms
   
@@ -394,10 +398,9 @@ grid.arrange(mplot,wplot, ncol=2)
 ]
 ]
 
-
-
 ---
- 
+class: no-logo
+
 ## Wilcoxon test visulize boxplots gender
   
 .panelset[
@@ -422,10 +425,8 @@ ggplot(target_p2 , aes(gender, NOTCH1, fill = gender))  +
 ]
 ]
 
-
-
 ---
-
+class: no-logo
 
 ## Wilcoxon test gender
 ```{r comment=NA}
@@ -439,6 +440,7 @@ ggplot(target_p2 , aes(gender, NOTCH1, fill = gender))  +
 The p-value isn't below the 0.05 threshold, therefore we cannot reject the null hypothesis that there is no difference to accept the alternative that there is a difference.
 
 ---
+class: no-logo
 
 ## Analysis of Variance (ANOVA)
 
@@ -447,6 +449,7 @@ Analysis of variance, or ANOVA, is performed to assess if means are different be
 
 
 ---
+class: no-logo
 
 ## ANOVA: Histograms
   
@@ -478,10 +481,9 @@ grid.arrange(mplot,wplot, ncol=2)
 ]
 ]
 
-
-
 ---
- 
+class: no-logo
+
 ## ANOVA test visulize boxplots gender
   
 .panelset[
@@ -506,10 +508,8 @@ ggplot(target_p2 , aes(gender, PAX5, fill = gender))  +
 ]
 ]
 
-
-
 ---
-
+class: no-logo
 
 ## ANOVA test gender
 
@@ -523,8 +523,7 @@ summary(pax5_anova)
 The p-value very small, indicating that there is a statistically significant difference in PAX5 expression between our 2 groups (gender).
 
 ---
-
-
+class: no-logo
 
 ## Thank you! 
   

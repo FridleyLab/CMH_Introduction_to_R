@@ -4,6 +4,7 @@
     <title>Lea.orange[R]ning about Statistics</title>
     <meta charset="utf-8" />
     <meta name="author" content="Alex Soupir" />
+    <meta name="date" content="2025-02-28" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view/tile-view.js"></script>
@@ -11,9 +12,9 @@
     <script src="libs/panelset/panelset.js"></script>
     <script src="libs/kePrint/kePrint.js"></script>
     <link href="libs/lightable/lightable.css" rel="stylesheet" />
-    <link rel="stylesheet" href="css/moffitt-xaringan.css" type="text/css" />
-    <link rel="stylesheet" href="css/moffitt-xaringan-extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/cmh-xaringan.css" type="text/css" />
     <link rel="stylesheet" href="css/tachyons.moffitt.css" type="text/css" />
+    <link rel="stylesheet" href="css/cmh-xaringan-extra.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -22,7 +23,7 @@
 
 
 name: title
-class: left bottom hide-count
+class: left bottom hide-count no-logo cmh-slide-border
 
 &lt;!-- Slide Extras --&gt;
 
@@ -38,7 +39,7 @@ class: left bottom hide-count
 .talk-title[
 # Lea.orange[R]ning about Statistics
 
-Correlation, Scatterplots. and Regression
+Correlation, Scatterplots and Regression
 ]
 
 .talk-author[
@@ -47,7 +48,7 @@ Alex Soupir&lt;br&gt;
 ]
 
 .talk-date.moffitt-gray[
-Feb 28, 2025
+February 28, 2025
 ]
 ]
 
@@ -84,6 +85,7 @@ or to force either to be shown
 --&gt;
 
 ---
+class: no-logo
 
 ## What you will learn to run
  
@@ -99,6 +101,7 @@ or to force either to be shown
  
  
 ---
+class: no-logo
 
 ## Scatter plots 
 
@@ -123,6 +126,7 @@ ggplot((target_p2),
  
  
 ---
+class: no-logo
 
 ## Scatter plots 
 
@@ -148,6 +152,7 @@ ggplot((target_p2),
 
 
 ---
+class: no-logo
 
 ## Scatter plots 
 
@@ -172,7 +177,8 @@ ggplot((target_p2),
 
 
 ---
- 
+class: no-logo
+
 # Correlation 
  
 A correlation coefficient is a numerical measure of some type of correlation, meaning a statistical relationship between two variables.  
@@ -186,7 +192,8 @@ Very common :
  Spearman
  
 ---
- 
+class: no-logo
+
 ## Pearson Correlation 
 
  The .bg-orange.white[Pearson product-moment correlation coefficient], also known as r or Pearson's r, is a measure of the strength and direction of the linear relationship between two variables that is defined as the covariance of the variables divided by the product of their standard deviations.  Pearson's r is the best-known and most commonly used type of correlation coefficient. A relationship is linear when a change in one variable is associated with a proportional change in the other variable.
@@ -200,7 +207,8 @@ Very common :
 
 
 ---
- 
+class: no-logo
+
 ## Pearson Correlation 
  
 
@@ -220,7 +228,8 @@ r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC",
 ```
 
 ---
- 
+class: no-logo
+
 ## Pearson Correlation 
  
 
@@ -230,7 +239,7 @@ r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC",
   kable_styling(font_size = 12)
 ```
 
-&lt;table class="table" style="font-size: 12px; color: black; margin-left: auto; margin-right: auto;"&gt;
+&lt;table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;"&gt;
  &lt;thead&gt;
   &lt;tr&gt;
    &lt;th style="text-align:left;"&gt; Parameter1 &lt;/th&gt;
@@ -292,7 +301,8 @@ r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC",
 
 
 ---
- 
+class: no-logo
+
 ## Pearson Correlation 
  
 
@@ -316,6 +326,7 @@ Observations: 378
 
 
 ---
+class: no-logo
 
 ## Pearson Correlation Scatter Plot
 
@@ -344,6 +355,7 @@ ggplot(target_p2) +
 
 
 ---
+class: no-logo
 
 ## Pearson Correlation Scatter Plot
   
@@ -370,6 +382,7 @@ ggplot(target_p2) +
  
 
 ---
+class: no-logo
 
 ## Pearson Correlation Scatter Plot
   
@@ -393,16 +406,11 @@ ggplot(target_p2) +
 ]
 ]
 
- 
-
-
-
- 
-
 
 
 
 ---
+class: no-logo
 
 ## Correllation Matrix 
  
@@ -425,7 +433,7 @@ KRAS -0.19 0.16  0.20 -0.17  1.00
 
 
 ---
-
+class: no-logo
 
 ## Spearman Correlation 
 
@@ -434,7 +442,7 @@ The Spearman correlation evaluates the monotonic relationship between two contin
 
 
 ---
-
+class: no-logo
 
 
 ## Spearman Correlation example of monotonic relationship
@@ -445,9 +453,7 @@ The Spearman correlation evaluates the monotonic relationship between two contin
 
 
 ---
-
-
- 
+class: no-logo
 
 ## Spearman Correlation 
  
@@ -468,17 +474,17 @@ r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC",
 ```
 
 ---
- 
+class: no-logo
+
 ## Spearman Correlation 
  
-
 
 ``` r
  knitr::kable(bind_rows(r1, r2, r3), format = 'html', digits = 3) %&gt;%
   kable_styling(font_size = 12)
 ```
 
-&lt;table class="table" style="font-size: 12px; color: black; margin-left: auto; margin-right: auto;"&gt;
+&lt;table class="table" style="font-size: 12px; margin-left: auto; margin-right: auto;"&gt;
  &lt;thead&gt;
   &lt;tr&gt;
    &lt;th style="text-align:left;"&gt; Parameter1 &lt;/th&gt;
@@ -533,9 +539,8 @@ r3 &lt;- target_p2 %&gt;% correlation::cor_test("MYC",
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-
- 
 ---
+class: no-logo
 
 ## Correllation Matrix 
  
@@ -559,7 +564,7 @@ KRAS -0.18  0.16  0.24 -0.20  1.00
 
 
 ---
-
+class: no-logo
 
 # Regression 
 
@@ -570,7 +575,7 @@ KRAS -0.18  0.16  0.24 -0.20  1.00
 
 
 ---
-
+class: no-logo
 
 ## Univariate Regression 
 
@@ -586,7 +591,7 @@ KRAS -0.18  0.16  0.24 -0.20  1.00
 
 
 ---
-
+class: no-logo
 
 ## Regression assumptions
 
@@ -599,7 +604,7 @@ KRAS -0.18  0.16  0.24 -0.20  1.00
 
 
 ---
-
+class: no-logo
 
 ##  Simple linear regression 
  
@@ -620,7 +625,7 @@ Coefficients:
 ```
 
 ---
-
+class: no-logo
 
 ##  Simple linear regression 
  
@@ -653,6 +658,7 @@ F-statistic: 655.6 on 1 and 376 DF,  p-value: &amp;lt; 2.2e-16
 
  
 ---
+class: no-logo
 
 ##  Regression plots 
   
@@ -677,6 +683,7 @@ F-statistic: 655.6 on 1 and 376 DF,  p-value: &amp;lt; 2.2e-16
 
 
 ---
+class: no-logo
 
 ## Scatter Plot with linear regression line
 
@@ -710,6 +717,7 @@ ggplot(target_p2, aes(PAX5, CD19) ) +
 
 
 ---
+class: no-logo
 
 ## Zoom in on the Scatter Plot with linear regression line
 
@@ -740,6 +748,7 @@ ggplot(target_p2, aes(PAX5, CD19) ) +
   
 
 ---
+class: no-logo
 
 ## Multiple Regression 
 
@@ -761,6 +770,7 @@ ggplot(target_p2, aes(PAX5, CD19) ) +
 
 
 ---
+class: no-logo
 
 ## Multiple Regression 
 
@@ -775,6 +785,7 @@ ggplot(target_p2, aes(PAX5, CD19) ) +
 `\(\sigma^{2}\)`. These are the same assumptions that we used in simple regression with one predictor.
 
 ---
+class: no-logo
 
 ## Multiple Regression 
 
@@ -791,6 +802,8 @@ ggplot(target_p2, aes(PAX5, CD19) ) +
 
 
 ---
+class: no-logo
+
 ##  Multiple regression 
  
 
@@ -811,8 +824,7 @@ Coefficients:
 
 
 ---
-
-
+class: no-logo
 
 ##  Multiple regression 
  
@@ -844,6 +856,7 @@ F-statistic: 328.2 on 2 and 375 DF,  p-value: &amp;lt; 2.2e-16
 &lt;/pre&gt;
 
 ---
+class: no-logo
 
 ## Scatter Plot with linear regression lines
 
@@ -866,6 +879,7 @@ ggplot(target_p2, aes(x = PAX5, y = CD19, shape = gender, color = gender)) +
 ]
 
 ---
+class: no-logo
 
 ## Scatter Plot with linear regression line
 
@@ -888,7 +902,7 @@ ggplot(target_p2, aes(x = PAX5, y = CD19, shape = gender, color = gender)) +
 ]
 
 ---
- 
+class: no-logo
 
 
 ## Thank you! 

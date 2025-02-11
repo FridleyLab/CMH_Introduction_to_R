@@ -9,9 +9,9 @@
     <script src="libs/tile-view/tile-view.js"></script>
     <link href="libs/panelset/panelset.css" rel="stylesheet" />
     <script src="libs/panelset/panelset.js"></script>
-    <link rel="stylesheet" href="css/moffitt-xaringan.css" type="text/css" />
-    <link rel="stylesheet" href="css/moffitt-xaringan-extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/cmh-xaringan.css" type="text/css" />
     <link rel="stylesheet" href="css/tachyons.moffitt.css" type="text/css" />
+    <link rel="stylesheet" href="css/cmh-xaringan-extra.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -20,7 +20,7 @@
 
 
 name: title
-class: left bottom hide-count
+class: left bottom hide-count no-logo cmh-slide-border
 
 &lt;!-- Slide Extras --&gt;
 
@@ -82,6 +82,7 @@ or to force either to be shown
 --&gt;
 
 ---
+class: no-logo
 
 ## What you will learn to run
  
@@ -96,6 +97,7 @@ or to force either to be shown
 
 
 ---
+class: no-logo
 
 ## Review of tables
  
@@ -112,6 +114,7 @@ janitor::tabyl(target_p2, gender, vital_status )
 ```
  
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -131,6 +134,7 @@ target_p2 %&gt;%
 
 
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -151,6 +155,7 @@ target_p2 %&gt;%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -172,6 +177,7 @@ target_p2 %&gt;%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -194,6 +200,7 @@ target_p2 %&gt;%
 ```
 
 ---
+class: no-logo
 
 ## Review of tables
 
@@ -219,7 +226,7 @@ target_p2 %&gt;%
  
  
 ---
-
+class: no-logo
 
 # Pearson’s chi-squared test
  
@@ -234,6 +241,8 @@ The chi squared test is a non-parametric test that can be applied to contingency
 
 
 ---
+class: no-logo
+
 ## Pearson’s chi-squared test
  
 The null hypothesis of the Chi-Square test is that no relationship exists between the categorical variables in the population; they are independent.
@@ -253,6 +262,7 @@ The null hypothesis of the Chi-Square test is that no relationship exists betwee
 
 
 ---
+class: no-logo
 
 ## Pearson’s chi-squared test
  
@@ -277,6 +287,7 @@ X-squared = 4.9009, df = 4, p-value = 0.2976
 The p-value is not low enough to reject the null hypothesis that there is no association between variables. 
 
 ---
+class: no-logo
 
 ## Pearson’s chi-squared test
  
@@ -299,7 +310,7 @@ ggplot(target_p2 %&gt;% filter(!is.na(race)),
 ]
  
 ---
-
+class: no-logo
 
 # Fisher's Exact Test
 
@@ -312,7 +323,7 @@ The test calculates the probability of observing the given contingency table (or
 - Often used when the contingency table contains cells with expected frequencies &lt; 5.
  
 ---
-
+class: no-logo
 
 ## Fisher's Exact Test
 
@@ -329,7 +340,7 @@ Where:
 | D | c | d |
  
 ---
-
+class: no-logo
 
 ## Fisher's Exact Test
 
@@ -344,6 +355,7 @@ Fisher's Exact Test is implemented in R using the `fisher.test()` function.
 
 
 ---
+class: no-logo
 
 ## Fisher's Exact Test
  
@@ -393,6 +405,7 @@ We see that we would **fail to reject** the null hypothesis that `race` and `gen
 ]
  
 ---
+class: no-logo
 
 # Survival with Kaplan-Meier
 
@@ -403,6 +416,7 @@ The Kaplan-Meier estimator calculates the survival probability at each time poin
 This is used over traditional modeling (like linear regression) because it takes into account censored data (i.e., when a patient hasn't died but are no longer in contact/lost to follow-up).
 
 ---
+class: no-logo
 
 ## Survival with Kaplan-Meier
 
@@ -422,6 +436,7 @@ target_p2 = target_p2 %&gt;%
 
 
 ---
+class: no-logo
 
 ## Survival with Kaplan-Meier
 
@@ -488,6 +503,7 @@ plot(km_fit, xlab = "Days", main = "Kaplan-Meier Plot")
 ]
 
 ---
+class: no-logo
 
 ## Survival Analysis 
 
@@ -509,6 +525,7 @@ legend(100, .3, c("Female", "Male"), lty = 2:3)
 ]
 
 ---
+class: no-logo
 
 ## Survival Analysis P-value
 
@@ -522,6 +539,7 @@ surv_pvalue(km_fit_gender)
 We see that there is no significant difference in survival between gender. 
 
 ---
+class: no-logo
 
 ## Questions?
     </textarea>

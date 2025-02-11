@@ -3,14 +3,14 @@
   <head>
     <title>Data wrangling</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Jordan Creed" />
-    <meta name="date" content="2021-06-23" />
+    <meta name="author" content="Jordan Creed, Alex Soupir" />
+    <meta name="date" content="2025-02-28" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view/tile-view.js"></script>
-    <link rel="stylesheet" href="css/moffitt-xaringan.css" type="text/css" />
-    <link rel="stylesheet" href="css/moffitt-xaringan-extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/cmh-xaringan.css" type="text/css" />
     <link rel="stylesheet" href="css/tachyons.moffitt.css" type="text/css" />
+    <link rel="stylesheet" href="css/cmh-xaringan-extra.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -19,7 +19,7 @@
 
 
 name: title
-class: left bottom hide-count
+class: left bottom hide-count no-logo cmh-slide-border
 
 &lt;!-- Slide Extras --&gt;
 
@@ -36,12 +36,12 @@ Cleaning and manipulating data
 ]
 
 .talk-author[
-Jordan Creed&lt;br&gt;
-.moffitt-gray[Moffitt Cancer Center]
+Jordan Creed, Alex Soupir&lt;br&gt;
+.moffitt-gray[Children's Mercy Hospital]
 ]
 
 .talk-date.moffitt-gray[
-June 23, 2021
+February 28, 2025
 ]
 ]
 
@@ -78,37 +78,13 @@ or to force either to be shown
 --&gt;
 
 ---
-
-## Homework Question 1: Which is "tidy"data 
-
-.pull-left[
-A)
-
-&lt;img src="03_slides-wrangling_files/figure-html/data-a.png" height="135px" width="500px" /&gt;
-
-
-B) 
-
-&lt;img src="03_slides-wrangling_files/figure-html/data-b.png" height="135px" width="500px" /&gt;
-]
-
-.pull-right[
-
-.accent-blue[C)]
-
-![](03_slides-wrangling_files/figure-html/answer.png)
-
-D) 
-
-![](03_slides-wrangling_files/figure-html/data-d.png)
-]
-
----
-class: inverse center middle
+class: inverse center middle no-logo
 
 # Complex wrangling
 
 ---
+class: no-logo
+
 ## Mutating `join()` &lt;img src="02_slides-import_files/figure-html/dplyr-logo.png" width="10%" align="right"/&gt;
 
 Mutating joins combine variables from two data frames
@@ -123,6 +99,8 @@ XXX_join(left_data, right_data, by = c("left_id" = "right_id"))
 &lt;img src="03_slides-wrangling_files/figure-html/joins-one.png" width="40%" class="center"/&gt;
 
 ---
+class: no-logo
+
 ## Filtering `join()` &lt;img src="02_slides-import_files/figure-html/dplyr-logo.png" width="10%" align="right"/&gt;
 
 `semi_join()` : returns rows from "left" data with matching values in "right" 
@@ -132,6 +110,8 @@ data, but only returns columns from "left" data
 "right" data and only returns columns from "left" data
 
 ---
+class: no-logo
+
 ## `tidyr` actions &lt;img src="02_slides-import_files/figure-html/tidyr-logo.png" width="10%" align="right"/&gt;
 
 👩‍💻 Tidy data isn't necessarily always long or wide.
@@ -143,6 +123,8 @@ data, but only returns columns from "left" data
 There may be times where you need to combine `pivot_wider()` and `pivot_longer()`
 
 ---
+class: no-logo
+
 ## Missing values propagate
 
 
@@ -162,13 +144,15 @@ sum(NA, 6, 12)
 ## [1] NA
 ```
 
-👩‍💻 `filter()` on missing values requires special treatment
+👨‍💻 `filter()` on missing values requires special treatment
 
 **FAILS:** `filter(data, variable == NA)`
 
 **WORKS:** `filter(data, is.na(variable))`
 
 ---
+class: no-logo
+
 ## `tidyr` actions &lt;img src="02_slides-import_files/figure-html/tidyr-logo.png" width="10%" align="right"/&gt;
 
 `drop_na()`, `fill()`, and `replace_na()` format missing values
@@ -177,6 +161,8 @@ sum(NA, 6, 12)
 * `replace_na(list(variable2 = "replacement value"))` : replaces `NA`s with a specified value
 
 ---
+class: no-logo
+
 ## `tidyr` actions &lt;img src="02_slides-import_files/figure-html/tidyr-logo.png" width="10%" align="right"/&gt;
 
 `separate()`, `extract()` and `unite()` split and combine character columns
@@ -186,6 +172,7 @@ sum(NA, 6, 12)
 * `unite(tibble_name, "combined_var_name", variable1, variable2, sep = ":")`
 
 ---
+class: no-logo
 
 &lt;img src="02_slides-import_files/figure-html/tidyr-cheatsheet.png" width="75%" class="center"/&gt;
 
