@@ -140,15 +140,16 @@ class: inverse center middle no-logo
 ---
 class: no-logo
 
-## The Cancer Genome Atlas (TCGA)
+## TARGET Acute Lymphoblastic Leukemia (ALL)
 
-TCGA is the large cancer genomics program spanning 33 cancer types and 
-multiple institutions. 
+The TARGET study aimed to examine molecular drivers of the development and progression of hard-to-treat
+childhood cancers. 
 
-  * HNSC - Head and neck squamous cell carcinoma
-  * KIRC - Kidney renal clear cell carcinoma
+  * ALL - Acute Lymphoblastic Leukemia
+  * P2 - Phase II, the phase of the study when tumors from pediatric cases who 
+  experienced bone marrow relapse within 4 years of diagnosis 
   
-Data is saved as two `.csv`s : `data/tcga-clinical.csv` and `data/tcga-gene-exp.csv`
+Data is saved as multiple `.csv`s : `data/TARGET_P2_clinical.csv`, `data/TARGET_P2_follow_up.csv` and `data/TARGET_P2_tpm.csv`
 
 ---
 class: inverse center middle no-logo
