@@ -3,7 +3,8 @@
   <head>
     <title>Lea.orange[R]ning about Statistics</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Alex Soupir" />
+    <meta name="author" content="Alex Soupir, Jordan Creed" />
+    <meta name="date" content="2025-02-28" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
     <script src="libs/tile-view/tile-view.js"></script>
@@ -40,12 +41,12 @@ T-Test, Wilcoxon Rank Sum, and ANOVA
 ]
 
 .talk-author[
-Alex Soupir&lt;br&gt;
+Alex Soupir, Jordan Creed&lt;br&gt;
 .moffitt-gray[Children's Mercy Hospital]
 ]
 
 .talk-date.moffitt-gray[
-Feb 28, 2025
+February 28, 2025
 ]
 ]
 
@@ -85,143 +86,11 @@ or to force either to be shown
 class: no-logo
 
 ## What you will learn to run
- 
-  
-- Review of tables with janitor package
 
 - Two-sample tests (T-test, Wilcoxon test)
 
 - Variance Analysis (ANOVA)
 
-
----
-class: no-logo
-
-## Review of tables
- 
-
-
-``` r
-janitor::tabyl(target_p2, gender, vital_status )
-```
-
-```
- gender Alive Dead Not Reported Unknown
- female    94   28            1       0
-   male   206   47            1       1
-```
- 
----
-class: no-logo
-
-## Review of tables
-
-``` r
-target_p2 %&gt;% 
-  tabyl(race, gender, show_na = FALSE )
-```
-
-```
-                      race female male
-                     asian      9    8
- black or african american     15   27
-          pacific islander      1    2
-                   Unknown     14   22
-                     white     84  196
-```
-
-
----
-class: no-logo
-
-## Review of tables
-
-``` r
-target_p2 %&gt;% 
-  tabyl(race, gender, show_na = FALSE ) %&gt;% 
-  adorn_totals(where = c("row","col"))
-```
-
-```
-                      race female male Total
-                     asian      9    8    17
- black or african american     15   27    42
-          pacific islander      1    2     3
-                   Unknown     14   22    36
-                     white     84  196   280
-                     Total    123  255   378
-```
-
----
-class: no-logo
-
-## Review of tables
-
-``` r
-target_p2 %&gt;% 
-  tabyl(race, gender, show_na = FALSE ) %&gt;% 
-  adorn_totals(where = c("row","col")) %&gt;% 
-  adorn_percentages(denominator = "col") 
-```
-
-```
-                      race      female        male       Total
-                     asian 0.073170732 0.031372549 0.044973545
- black or african american 0.121951220 0.105882353 0.111111111
-          pacific islander 0.008130081 0.007843137 0.007936508
-                   Unknown 0.113821138 0.086274510 0.095238095
-                     white 0.682926829 0.768627451 0.740740741
-                     Total 1.000000000 1.000000000 1.000000000
-```
-
----
-class: no-logo
-
-## Review of tables
-
-``` r
-target_p2 %&gt;% 
-  tabyl(race, gender, show_na = FALSE ) %&gt;% 
-  adorn_totals(where = c("row","col")) %&gt;% 
-  adorn_percentages(denominator = "col") %&gt;% 
-  adorn_pct_formatting(digits = 0)  
-```
-
-```
-                      race female male Total
-                     asian     7%   3%    4%
- black or african american    12%  11%   11%
-          pacific islander     1%   1%    1%
-                   Unknown    11%   9%   10%
-                     white    68%  77%   74%
-                     Total   100% 100%  100%
-```
-
----
-class: no-logo
-
-## Review of tables
-
-``` r
-target_p2 %&gt;% 
-  tabyl(race, gender, show_na = FALSE ) %&gt;% 
-  adorn_totals(where = c("row","col")) %&gt;% 
-  adorn_percentages(denominator = "col") %&gt;% 
-  adorn_pct_formatting(digits = 0) %&gt;% 
-  adorn_ns(position = "front") 
-```
-
-```
-                      race     female       male      Total
-                     asian   9   (7%)   8   (3%)  17   (4%)
- black or african american  15  (12%)  27  (11%)  42  (11%)
-          pacific islander   1   (1%)   2   (1%)   3   (1%)
-                   Unknown  14  (11%)  22   (9%)  36  (10%)
-                     white  84  (68%) 196  (77%) 280  (74%)
-                     Total 123 (100%) 255 (100%) 378 (100%)
-```
-
- 
 ---
 class: no-logo
 
@@ -305,7 +174,7 @@ ggplot(target_p2 , aes(gender, MME, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -328,7 +197,7 @@ class: no-logo
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-3-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -376,7 +245,7 @@ class: no-logo
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-11-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-5-1.png" width="100%" /&gt;
 ]
 
 .panel[.panel-name[R Code]
@@ -419,7 +288,7 @@ ggplot(target_p2 , aes(gender, NOTCH1, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-12-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-6-1.png" width="100%" /&gt;
 ]
 ]
 
@@ -462,7 +331,7 @@ class: no-logo
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-14-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-8-1.png" width="100%" /&gt;
 ]
 
 .panel[.panel-name[R Code]
@@ -505,7 +374,7 @@ ggplot(target_p2 , aes(gender, PAX5, fill = gender))  +
 
 .panel[.panel-name[Plot]
 
-&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-15-1.png" width="100%" /&gt;
+&lt;img src="05_mean-stats_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
 ]
 ]
 

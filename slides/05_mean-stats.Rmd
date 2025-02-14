@@ -2,9 +2,9 @@
 title: "Lea.orange[R]ning about Statistics"
 subtitle: "T-Test, Wilcoxon Rank Sum, and ANOVA"
 author: 
-  - Alex Soupir
+  - Alex Soupir, Jordan Creed
 institute: "Children's Mercy Hospital"
-date: "Feb 28, 2025"
+date: "February 28, 2025"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -142,92 +142,11 @@ or to force either to be shown
 class: no-logo
 
 ## What you will learn to run
- 
-  
-- Review of tables with janitor package
 
 - Two-sample tests (T-test, Wilcoxon test)
 
 - Variance Analysis (ANOVA)
 
-
----
-class: no-logo
-
-## Review of tables
- 
-
-```{r comment=NA}
-
-janitor::tabyl(target_p2, gender, vital_status )
-   
-```
- 
----
-class: no-logo
-
-## Review of tables
-```{r comment=NA}
-
-target_p2 %>% 
-  tabyl(race, gender, show_na = FALSE )
-```
-
-
----
-class: no-logo
-
-## Review of tables
-```{r comment=NA}
-
-target_p2 %>% 
-  tabyl(race, gender, show_na = FALSE ) %>% 
-  adorn_totals(where = c("row","col"))
-```
-
----
-class: no-logo
-
-## Review of tables
-```{r comment=NA}
-
-
-target_p2 %>% 
-  tabyl(race, gender, show_na = FALSE ) %>% 
-  adorn_totals(where = c("row","col")) %>% 
-  adorn_percentages(denominator = "col") 
-```
-
----
-class: no-logo
-
-## Review of tables
-```{r comment=NA}
-
-target_p2 %>% 
-  tabyl(race, gender, show_na = FALSE ) %>% 
-  adorn_totals(where = c("row","col")) %>% 
-  adorn_percentages(denominator = "col") %>% 
-  adorn_pct_formatting(digits = 0)  
-
-```
-
----
-class: no-logo
-
-## Review of tables
-```{r comment=NA}
-
-target_p2 %>% 
-  tabyl(race, gender, show_na = FALSE ) %>% 
-  adorn_totals(where = c("row","col")) %>% 
-  adorn_percentages(denominator = "col") %>% 
-  adorn_pct_formatting(digits = 0) %>% 
-  adorn_ns(position = "front") 
- 
-```
-
- 
 ---
 class: no-logo
 
