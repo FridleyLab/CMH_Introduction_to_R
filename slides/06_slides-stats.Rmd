@@ -2,7 +2,7 @@
 title: "Lea.orange[R]ning about Statistics"
 subtitle: "Correlation, Scatterplots and Regression"
 author: 
-  - Alex Soupir
+  - Alex Soupir, Jordan Creed
 institute: "Children's Mercy Hospital"
 date: "February 28, 2025"
 output:
