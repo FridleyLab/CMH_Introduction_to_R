@@ -111,14 +111,20 @@ Materials will be made available on
 are using an organization-issued laptop, you may want to verify before
 you arrive that you can access GitHub.
 
-## Schedule and Links
+## Schedule
 
-- 8:00 - 8:15 - Welcome
-- 8:15 - 9 - Intro to R and Github
-- 9 - 10 - data import and clean
-- 10 - 10:15 - break
-- 10:15 - 11:30 - data cleaning continued
+- 08:00 - 08:15 - Welcome
+- 08:15 - 09:00 - Intro to R and Github
+- 09:00 - 10:00 - Data import and clean
+- 10:00 - 10:15 - Break
+- 10:15 - 11:30 - Data cleaning continued
 - 11:30 - 12:30 - Intro to ggplot2
+- 12:30 - 01:30 - Lunch
+- 01:30 - 02:30 - Statistical testing of means
+- 02:30 - 03:15 - Regression modeling
+- 03:15 - 03:30 - Break
+- 03:30 - 04:30 - Categorical data analysis
+- 04:30 - 05:00 - Rmarkdown (time allowing)
 
 ## Instructors
 
@@ -129,5 +135,10 @@ Add links to personal websites and double check personal info
 
 This workshop is taught by Jordan Creed and Alex Soupir and sponsored by
 Brooke Fridley.
+
+## Additional resources
+
+- [R for Data Science](https://r4ds.had.co.nz/)
+- [Cheatsheets](https://posit.co/resources/cheatsheets/)
 
 ------------------------------------------------------------------------
